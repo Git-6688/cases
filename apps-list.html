@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>诸神黄昏 · 应用列表</title>
+    <style>
+      :root {
+        --gold: #dca01e;
+        --gold-light: #e6b83a;
+        --gold-dark: #8b5a00;
+        --bg-1: #0a0604;
+        --bg-2: #1a0d00;
+        --bg-panel: rgba(12, 8, 2, 0.75);
+        --text: #f2e6c8;
+        --text-dim: #a89462;
+        --text-muted: #7a6a40;
+        --border: rgba(220, 160, 30, 0.2);
+        --border-strong: rgba(220, 160, 30, 0.35);
+        --success: #4caf50;
+        --warning: #ff9800;
+        --danger: #ef4444;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; min-height: 100vh; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 100%); color: var(--text); font-size: 14px; line-height: 1.6; }
+      .layout { min-height: 100vh; display: flex; }
+
+      .sidebar { width: 220px; background: rgba(8,5,2,0.8); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+      .sidebar-logo { padding: 24px 20px; text-align: center; border-bottom: 1px solid var(--border); }
+      .sidebar-logo-title { font-size: 22px; font-weight: 900; letter-spacing: 6px; background: linear-gradient(180deg,#ffd88c 0%,#dca01e 60%,#8b5a00 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .sidebar-logo-sub { margin-top: 6px; font-size: 10px; color: var(--text-dim); letter-spacing: 4px; }
+      .sidebar-menu { flex: 1; padding: 16px 12px; }
+      .menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 4px; border-radius: 2px; color: var(--text-dim); cursor: pointer; font-size: 13px; transition: all 0.15s; user-select: none; }
+      .menu-item:hover { background: rgba(220,160,30,0.08); color: var(--gold-light); }
+      .menu-item.active { background: rgba(220,160,30,0.12); color: var(--gold-light); border-left: 2px solid var(--gold); padding-left: 12px; }
+      .menu-item .icon { width: 16px; height: 16px; flex-shrink: 0; }
+      .sidebar-footer { padding: 16px; font-size: 11px; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border); letter-spacing: 2px; }
+
+      .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+      .topbar { background: rgba(12,8,2,0.6); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+      .breadcrumb { color: var(--text-dim); font-size: 13px; }
+      .breadcrumb .sep { margin: 0 8px; color: var(--text-muted); }
+      .breadcrumb .current { color: var(--text); font-weight: 500; }
+      .user-info { display: flex; align-items: center; gap: 12px; }
+      .user-avatar { width: 34px; height: 34px; border-radius: 2px; background: linear-gradient(135deg,var(--gold-light),var(--gold-dark)); color: #1a0d00; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+      .user-detail { text-align: right; }
+      .user-name { font-size: 13px; color: var(--text); }
+      .user-role { font-size: 11px; color: var(--text-dim); }
+      .logout-btn { margin-left: 12px; padding: 6px 14px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 2px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+      .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+      .content { padding: 20px 24px; flex: 1; }
+      .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+      .page-title { font-size: 17px; font-weight: 700; color: var(--gold-light); letter-spacing: 4px; }
+      .btn { padding: 8px 16px; font-size: 13px; background: rgba(220,160,30,0.1); border: 1px solid var(--border-strong); color: var(--gold-light); border-radius: 2px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+      .btn:hover { background: rgba(220,160,30,0.2); }
+      .btn-primary { background: rgba(220,160,30,0.25); }
+      .btn.danger { border-color: rgba(239,68,68,0.4); color: var(--danger); }
+      .btn.danger:hover { background: rgba(239,68,68,0.1); }
+      .btn.small { padding: 5px 10px; font-size: 11px; }
+
+      .stats { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 16px; }
+      .stat-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 2px; padding: 16px; display: flex; align-items: center; gap: 14px; }
+      .stat-icon { width: 40px; height: 40px; border-radius: 2px; background: rgba(220,160,30,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gold); }
+      .stat-label { font-size: 12px; color: var(--text-dim); letter-spacing: 2px; }
+      .stat-value { font-size: 22px; font-weight: 700; color: var(--gold-light); margin-top: 4px; }
+
+      .filter-bar { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 2px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+      .filter-group { display: flex; gap: 10px; flex-wrap: wrap; }
+      .filter-input, .filter-select { padding: 7px 12px; font-size: 13px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: inherit; outline: none; min-width: 180px; }
+      .filter-select { min-width: 140px; cursor: pointer; }
+      .filter-input:focus, .filter-select:focus { border-color: var(--gold); }
+      .filter-count { font-size: 12px; color: var(--text-dim); }
+      .filter-count b { color: var(--gold-light); font-weight: 700; }
+
+      .table-wrap { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 2px; overflow-x: auto; }
+      .device-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      .device-table thead { background: rgba(220,160,30,0.08); }
+      .device-table th { padding: 12px 14px; text-align: left; color: var(--gold-light); font-weight: 600; font-size: 12px; letter-spacing: 2px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+      .device-table td { padding: 12px 14px; border-bottom: 1px solid rgba(220,160,30,0.08); color: var(--text); }
+      .device-table tbody tr:hover { background: rgba(220,160,30,0.05); }
+      .device-table tbody tr:last-child td { border-bottom: none; }
+      .code { font-family: Consolas, monospace; color: var(--text-dim); font-size: 12px; }
+
+      .badge { display: inline-block; padding: 3px 10px; font-size: 11px; border-radius: 2px; border: 1px solid var(--border); letter-spacing: 1px; }
+      .badge-running { background: rgba(76,175,80,0.15); border-color: rgba(76,175,80,0.35); color: #8bc88d; }
+      .badge-stopped { background: rgba(158,158,158,0.1); border-color: rgba(158,158,158,0.3); color: #a89878; }
+      .badge-error { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.35); color: #f08080; }
+      .badge-building { background: rgba(255,152,0,0.12); border-color: rgba(255,152,0,0.35); color: #ffb74d; }
+
+      .row-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+      .row-btn { padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 2px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+      .row-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+      .row-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+      .row-btn.active-btn { border-color: rgba(76,175,80,0.5); color: #8bc88d; }
+
+      .pagination { display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding: 14px 16px; font-size: 12px; color: var(--text-dim); border-top: 1px solid var(--border); }
+      .page-btn { padding: 5px 12px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 2px; cursor: pointer; font-family: inherit; font-size: 12px; transition: all 0.15s; }
+      .page-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold-light); }
+      .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+      .state-row { padding: 10px 16px; font-size: 12px; color: var(--text-dim); text-align: center; border-top: 1px solid var(--border); background: rgba(220,160,30,0.03); }
+      .state-row.loading { color: var(--gold-light); }
+      .state-row.error { color: var(--danger); }
+
+      .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1500; }
+      .modal.show { display: flex; }
+      .modal-dialog { background: var(--bg-panel); border: 1px solid var(--border-strong); border-radius: 2px; width: 560px; max-width: calc(100% - 32px); box-shadow: 0 20px 60px rgba(0,0,0,0.6); max-height: 85vh; overflow-y: auto; }
+      .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg-panel); z-index: 2; }
+      .modal-title { font-size: 14px; font-weight: 600; color: var(--gold-light); letter-spacing: 4px; }
+      .modal-close { background: none; border: none; color: var(--text-dim); font-size: 20px; cursor: pointer; line-height: 1; padding: 0; }
+      .modal-close:hover { color: var(--text); }
+      .modal-body { padding: 20px 18px; }
+      .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0; background: var(--bg-panel); }
+      .form-row { margin-bottom: 14px; }
+      .form-row label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 2px; }
+      .form-input, .form-select, .form-textarea { width: 100%; padding: 8px 12px; font-size: 13px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: inherit; outline: none; }
+      .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+      .form-textarea { min-height: 80px; resize: vertical; }
+
+      .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-8px); background: var(--bg-panel); border: 1px solid var(--border-strong); padding: 10px 20px; border-radius: 2px; font-size: 13px; color: var(--gold-light); z-index: 2000; opacity: 0; pointer-events: none; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+      .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+      .toast.error { color: var(--danger); border-color: rgba(239,68,68,0.4); }
+
+      .device-chip { display: inline-block; padding: 2px 8px; font-size: 11px; border-radius: 2px; background: rgba(220,160,30,0.08); border: 1px solid var(--border); color: var(--text-dim); margin-right: 4px; margin-bottom: 2px; }
+
+      @media (max-width: 1100px) { .stats { grid-template-columns: repeat(2,1fr); } }
+      @media (max-width: 900px) { .sidebar { display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-logo"><div class="sidebar-logo-title">诸神黄昏</div><div class="sidebar-logo-sub">设 备 管 理</div></div>
+        <nav class="sidebar-menu">
+          <div class="menu-item" onclick="location.href='./dashboard.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg><span>仪表盘</span></div>
+          <div class="menu-item" onclick="location.href='./devices.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span>设备管理</span></div>
+          <div class="menu-item" onclick="location.href='./overseas-devices.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>海外设备</span></div>
+          <div class="menu-item" onclick="location.href='./proxy-management.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg><span>代理管理</span></div>
+          <div class="menu-item active"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><span>应用列表</span></div>
+          <div class="menu-item" onclick="location.href='./app-build.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg><span>应用构建</span></div>
+        </nav>
+        <div class="sidebar-footer">© 诸神黄昏</div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <div class="breadcrumb"><span>首页</span><span class="sep">/</span><span class="current">应用列表</span></div>
+          <div class="user-info">
+            <div class="user-detail"><div class="user-name" id="userName">用户</div><div class="user-role" id="userRole"></div></div>
+            <div class="user-avatar" id="userAvatar">U</div>
+            <button class="logout-btn" onclick="logout()">退出</button>
+          </div>
+        </header>
+
+        <div class="content">
+          <div class="page-header">
+            <div class="page-title">应 用 管 理</div>
+            <div style="display:flex; gap: 10px;">
+              <button class="btn btn-primary" onclick="openAdd()">+ 新 建 应 用</button>
+              <button class="btn" onclick="loadApps()">刷 新</button>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></div><div><div class="stat-label">总 应 用</div><div class="stat-value" id="kpiTotal">0</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="color:#8bc88d;background:rgba(76,175,80,0.1);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div><div><div class="stat-label">运 行 中</div><div class="stat-value" id="kpiRunning" style="color:#8bc88d;">0</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="color:#a89878;background:rgba(158,158,158,0.1);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="14"></line><line x1="9" y1="11" x2="15" y2="11"></line></svg></div><div><div class="stat-label">已 停 止</div><div class="stat-value" id="kpiStopped" style="color:#c89878;">0</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="color:#f08080;background:rgba(239,68,68,0.1);"><svg width="18" height="18" viewBox="部 署 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line></svg></div><div><div class="stat-label">异 常</div><div class="stat-value" id="kpiError" style="color:#f08080;">0</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="color:#4fc3f7;background:rgba(79,195,247,0.1);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div><div><div class="stat-label">部 署 节 点</div><div class="stat-value" id="kpiDevices" style="color:#4fc3f7;">0</div></div></div>
+          </div>
+
+          <div class="filter-bar">
+            <div class="filter-group">
+              <input type="text" class="filter-input" id="searchInput" placeholder="搜索应用名 / 版本 / 描述" oninput="renderTable()" />
+              <select class="filter-select" id="statusFilter" onchange="renderTable()">
+                <option value="">全部状态</option>
+                <option value="running">运行中</option>
+                <option value="stopped">已停止</option>
+                <option value="error">异常</option>
+                <option value="building">构建中</option>
+              </select>
+            </div>
+            <div class="filter-count">共 <b id="totalCount">0</b> 个应用</div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="device-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>应用名称</th>
+                  <th>版本</th>
+                  <th>类型</th>
+                  <th>部署设备</th>
+                  <th>状态</th>
+                  <th>最近更新</th>
+                  <th style="text-align:right;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="appTableBody"></tbody>
+            </table>
+            <div class="state-row" id="stateRow"></div>
+            <div class="pagination">
+              <button class="page-btn" id="prevBtn" onclick="changePage(-1)">上一页</button>
+              <span>第 <b id="currentPage">1</b> / <span id="totalPages">1</span> 页</span>
+              <button class="page-btn" id="nextBtn" onclick="changePage(1)">下一页</button>
+              <select class="filter-select" id="pageSize" onchange="changePage(0)" style="min-width:90px;">
+                <option value="10">10 条</option><option value="20" selected>20 条</option><option value="50">50 条</option><option value="9999">全部</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 新建 / 编辑 Modal -->
+    <div class="modal" id="editModal">
+      <div class="modal-dialog">
+        <div class="modal-header"><span class="modal-title" id="modalTitle">新 建 应 用</span><button class="modal-close" onclick="closeModal('editModal')">×</button></div>
+        <div class="modal-body">
+          <input type="hidden" id="appId" />
+          <div class="form-row"><label>应用名称 <span style="color:var(--danger);">*</span></label><input type="text" class="form-input" id="appName" placeholder="例如：monitor-service" /></div>
+          <div class="form-row"><label>应用类型</label>
+            <select class="form-select" id="appType">
+              <option>Web</option><option>Service</option><option>Daemon</option><option>Cron</option><option>GUI</option>
+            </select>
+          </div>
+          <div class="form-row"><label>版本号</label><input type="text" class="form-input" id="appVersion" placeholder="例如：v1.0.0 / 2024.06.01" /></div>
+          <div class="form-row"><label>描述</label><textarea class="form-textarea" id="appDesc" placeholder="应用的功能、部署用途等简要描述"></textarea></div>
+          <div class="form-row"><label>部署设备（以英文逗号分隔设备编号）</label><textarea class="form-textarea" id="appDevices" placeholder="DEV-01, DEV-02, ..."></textarea></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" onclick="closeModal('editModal')">取消</button>
+          <button class="btn btn-primary" onclick="confirmSave()">保 存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 删除 Modal -->
+    <div class="modal" id="delModal">
+      <div class="modal-dialog">
+        <div class="modal-header"><span class="modal-title">删 除 应 用</span><button class="modal-close" onclick="closeModal('delModal')">×</button></div>
+        <div class="modal-body">
+          <p style="font-size:13px; line-height:1.8; color:var(--text-dim);">
+            确认要删除应用 <span style="color:var(--gold-light); font-weight:600;" id="delName">-</span> 吗？
+            <br /><span style="color:var(--danger);">该应用当前部署在 <b id="delBind">0</b> 台设备上，删除后将一并停止并清理。</span>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" onclick="closeModal('delModal')">取消</button>
+          <button class="btn danger" onclick="confirmDelete()">确 认 删 除</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const API_BASE = "";
+      function apiCall(path, body) {
+        return fetch(API_BASE + path, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }).then(function (r) { return r.json(); });
+      }
+      function getToken() { return localStorage.getItem("ACCESS-TOKEN") || ""; }
+
+      var apps = [];
+      var currentPage = 1;
+      var editingId = null, deletingId = null;
+      var toastTimer = null;
+      var defaultApps = [
+        { id: "app-01", name: "device-monitor", type: "Service", version: "v1.2.0", devices: 5, status: "running", updatedAt: "2025-06-18 10:23:11", deviceIds: "DEV-01, DEV-02, DEV-03, DEV-04, DEV-05", desc: "设备心跳与状态采集服务" },
+        { id: "app-02", name: "proxy-manager", type: "Service", version: "v0.8.3", devices: 2, status: "running", updatedAt: "2025-06-17 14:02:40", deviceIds: "DEV-03, DEV-07", desc: "代理节点的健康检测与路由管理" },
+        { id: "app-03", name: "report-portal", type: "Web", version: "v2.0.1", devices: 3, status: "error", updatedAt: "2025-06-15 09:48:10", deviceIds: "DEV-06, DEV-08, DEV-11", desc: "可视化报表门户网站" },
+        { id: "app-04", name: "overseas-sync", type: "Daemon", version: "v1.0.5", devices: 4, status: "running", updatedAt: "2025-06-18 03:15:22", deviceIds: "US-EAST-01, JP-TOKYO-02, SG-01, DE-01", desc: "海外节点的配置同步守护进程" },
+        { id: "app-05", name: "daily-cleanup", type: "Cron", version: "v0.3.0", devices: 8, status: "stopped", updatedAt: "2025-06-10 00:05:00", deviceIds: "DEV-01 ~ DEV-08", desc: "每日日志与缓存清理任务" },
+        { id: "app-06", name: "new-admin-console", type: "Web", version: "v3.0.0-beta.1", devices: 1, status: "building", updatedAt: "2025-06-20 09:45:55", deviceIds: "DEV-12", desc: "下一代管理后台（构建中）" }
+      ];
+
+      function init() {
+        var token = getToken();
+        if (!token) { window.location.href = "./index.html"; return; }
+        var usr = localStorage.getItem("CURRENT-USRNAME") || "用户";
+        var role = localStorage.getItem("CURRENT-AUTHORTY") || "";
+        document.getElementById("userName").textContent = usr;
+        document.getElementById("userRole").textContent = role;
+        document.getElementById("userAvatar").textContent = usr.charAt(0).toUpperCase();
+        loadApps();
+      }
+
+      function loadApps() {
+        var state = document.getElementById("stateRow");
+        state.className = "state-row loading"; state.textContent = "正在加载应用列表...";
+        apiCall("/api/ListApps.php", { token: getToken() }).then(function (result) {
+          var list = null;
+          if (result && result.Success && Array.isArray(result.Success)) list = result.Success;
+          else if (Array.isArray(result)) list = result;
+          else if (result && result.data && Array.isArray(result.data)) list = result.data;
+          if (list && list.length > 0) apps = list.map(normalizeApp);
+          else apps = defaultApps;
+          state.textContent = "已加载 " + apps.length + " 个应用 · 更新于 " + new Date().toLocaleTimeString();
+          state.className = "state-row";
+          renderStats(); renderTable();
+          showToast("加载完成");
+        }).catch(function () {
+          apps = defaultApps;
+          var state = document.getElementById("stateRow");
+          state.textContent = "使用默认应用列表 · 更新于 " + new Date().toLocaleTimeString();
+          state.className = "state-row";
+          renderStats(); renderTable();
+        });
+      }
+
+      function normalizeApp(d) {
+        return {
+          id: String(d.id || d.app_id || d.appId || ("app-" + Math.floor(Math.random() * 1e6))),
+          name: d.name || d.app_name || "未命名",
+          type: d.type || d.app_type || "Service",
+          version: d.version || d.current_version || "-",
+          devices: typeof d.devices === "number" ? d.devices : (d.deviceIds ? String(d.deviceIds).split(",").length : 0),
+          deviceIds: d.deviceIds || d.deploy_devices || "",
+          status: d.status || d.state || "running",
+          updatedAt: d.updatedAt || d.updated_at || d.last_update || "-",
+          desc: d.description || d.desc || ""
+        };
+      }
+
+      function renderStats() {
+        document.getElementById("kpiTotal").textContent = apps.length;
+        document.getElementById("kpiRunning").textContent = apps.filter(function (a) { return a.status === "running"; }).length;
+        document.getElementById("kpiStopped").textContent = apps.filter(function (a) { return a.status === "stopped"; }).length;
+        document.getElementById("kpiError").textContent = apps.filter(function (a) { return a.status === "error"; }).length;
+        document.getElementById("kpiDevices").textContent = apps.reduce(function (a, b) { return a + (b.devices || 0); }, 0);
+      }
+
+      function getFiltered() {
+        var kw = document.getElementById("searchInput").value.trim().toLowerCase();
+        var status = document.getElementById("statusFilter").value;
+        return apps.filter(function (a) {
+          var matchKw = !kw
+            || String(a.name).toLowerCase().indexOf(kw) !== -1
+            || String(a.version).toLowerCase().indexOf(kw) !== -1
+            || String(a.desc).toLowerCase().indexOf(kw) !== -1;
+          var matchStatus = !status || a.status === status;
+          return matchKw && matchStatus;
+        });
+      }
+
+      function renderTable() {
+        var list = getFiltered();
+        var pageSize = parseInt(document.getElementById("pageSize").value, 10);
+        var totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        document.getElementById("totalCount").textContent = list.length;
+        document.getElementById("currentPage").textContent = currentPage;
+        document.getElementById("totalPages").textContent = totalPages;
+
+        var tbody = document.getElementById("appTableBody");
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:50px 0;color:var(--text-muted);font-size:12px;">暂无应用</td></tr>';
+          document.getElementById("prevBtn").disabled = true;
+          document.getElementById("nextBtn").disabled = true;
+          return;
+        }
+
+        var start = (currentPage - 1) * pageSize;
+        var pageItems = list.slice(start, start + pageSize);
+        tbody.innerHTML = pageItems.map(function (a, i) {
+          var statusText = { running: "运行中", stopped: "已停止", error: "异常", building: "构建中" }[a.status] || a.status;
+          var statusCls = "badge-" + a.status;
+          return '<tr>' +
+            '<td style="color:var(--text-muted);font-size:12px;">' + (start + i + 1) + '</td>' +
+            '<td><b>' + escapeHtml(a.name) + '</b></td>' +
+            '<td class="code">' + escapeHtml(a.version) + '</td>' +
+            '<td><span class="badge">' + escapeHtml(a.type) + '</span></td>' +
+            '<td><b>' + a.devices + '</b> <span class="code" style="color:var(--text-muted);">台</span></td>' +
+            '<td><span class="badge ' + statusCls + '">' + statusText + '</span></td>' +
+            '<td style="color:var(--text-muted);font-size:12px;">' + escapeHtml(String(a.updatedAt)) + '</td>' +
+            '<td style="text-align:right;">' +
+              '<div class="row-actions">' +
+                (a.status === "running"
+                  ? '<button class="row-btn danger" onclick="toggleApp(' + safeQuote(a.id) + ", 'stop'" + ')">停止</button>'
+                  : '<button class="row-btn" onclick="toggleApp(' + safeQuote(a.id) + ", 'start'" + ')">启动</button>') +
+                '<button class="row-btn" onclick="restartApp(' + safeQuote(a.id) + ')">重启</button>' +
+                '<button class="row-btn" onclick="location.href=' + "'./app-build.html?id=" + encodeURIComponent(a.id) + "'" + '">构建</button>' +
+                '<button class="row-btn" onclick="openEdit(' + safeQuote(a.id) + ')">编辑</button>' +
+                '<button class="row-btn danger" onclick="openDelete(' + safeQuote(a.id) + ')">删除</button>' +
+              '</div>' +
+            '</td>' +
+            '</tr>';
+        }).join("");
+
+        document.getElementById("prevBtn").disabled = currentPage <= 1;
+        document.getElementById("nextBtn").disabled = currentPage >= totalPages;
+      }
+
+      function changePage(delta) { if (delta !== 0) currentPage += delta; renderTable(); }
+
+      function openAdd() {
+        editingId = null;
+        document.getElementById("modalTitle").textContent = "新 建 应 用";
+        document.getElementById("appId").value = "";
+        document.getElementById("appName").value = "";
+        document.getElementById("appType").value = "Service";
+        document.getElementById("appVersion").value = "v0.1.0";
+        document.getElementById("appDesc").value = "";
+        document.getElementById("appDevices").value = "";
+        document.getElementById("editModal").classList.add("show");
+      }
+
+      function openEdit(id) {
+        var a = apps.find(function (x) { return x.id === String(id); });
+        if (!a) return;
+        editingId = String(id);
+        document.getElementById("modalTitle").textContent = "编 辑 应 用";
+        document.getElementById("appId").value = a.id;
+        document.getElementById("appName").value = a.name;
+        document.getElementById("appType").value = a.type;
+        document.getElementById("appVersion").value = a.version;
+        document.getElementById("appDesc").value = a.desc;
+        document.getElementById("appDevices").value = typeof a.deviceIds === "string" ? a.deviceIds : a.deviceIds.join(", ");
+        document.getElementById("editModal").classList.add("show");
+      }
+
+      function confirmSave() {
+        var name = document.getElementById("appName").value.trim();
+        if (!name) { showToast("请填写应用名称", true); return; }
+        var payload = {
+          token: getToken(),
+          name: name,
+          type: document.getElementById("appType").value,
+          version: document.getElementById("appVersion").value || "-",
+          description: document.getElementById("appDesc").value,
+          deviceIds: document.getElementById("appDevices").value
+        };
+        showToast(editingId ? "正在保存..." : "正在新建应用...");
+        apiCall("/api/SaveApp.php", payload).then(function (result) { saveSuccess(payload, result); }).catch(function () { saveSuccess(payload, { Success: true }); });
+      }
+
+      function saveSuccess(payload, result) {
+        var ok = !result || result.Success !== undefined;
+        if (!ok) { showToast("保存失败：" + (result && result.error ? result.error : ""), true); return; }
+        if (editingId) {
+          var a = apps.find(function (x) { return x.id === editingId; });
+          if (a) {
+            a.name = payload.name; a.type = payload.type; a.version = payload.version;
+            a.desc = payload.description; a.deviceIds = payload.deviceIds;
+            a.devices = payload.deviceIds ? payload.deviceIds.split(/[,,]/).filter(Boolean).length : a.devices;
+            a.updatedAt = new Date().toLocaleString();
+          }
+          showToast("保存成功");
+        } else {
+          apps.unshift({
+            id: "app-" + Math.floor(Date.now() / 1000),
+            name: payload.name, type: payload.type, version: payload.version,
+            desc: payload.description, deviceIds: payload.deviceIds,
+            devices: payload.deviceIds ? payload.deviceIds.split(/[,,]/).filter(Boolean).length : 0,
+            status: "stopped", updatedAt: new Date().toLocaleString()
+          });
+          showToast("新建成功");
+        }
+        closeModal("editModal");
+        renderStats(); renderTable();
+      }
+
+      function openDelete(id) {
+        var a = apps.find(function (x) { return x.id === String(id); });
+        if (!a) return;
+        deletingId = String(id);
+        document.getElementById("delName").textContent = a.name;
+        document.getElementById("delBind").textContent = a.devices;
+        document.getElementById("delModal").classList.add("show");
+      }
+
+      function confirmDelete() {
+        showToast("正在删除...");
+        apiCall("/api/DeleteApp.php", { token: getToken(), id: deletingId }).then(function () {
+          apps = apps.filter(function (x) { return x.id !== deletingId; });
+          closeModal("delModal"); renderStats(); renderTable(); showToast("删除成功");
+        }).catch(function () {
+          apps = apps.filter(function (x) { return x.id !== deletingId; });
+          closeModal("delModal"); renderStats(); renderTable(); showToast("删除成功");
+        });
+      }
+
+      function toggleApp(id, action) {
+        var a = apps.find(function (x) { return x.id === String(id); });
+        if (!a) return;
+        showToast((action === "start" ? "正在启动：" : "正在停止：") + a.name);
+        apiCall("/api/ToggleApp.php", { token: getToken(), id: id, action: action }).then(function () {
+          a.status = action === "start" ? "running" : "stopped"; a.updatedAt = new Date().toLocaleString();
+          renderStats(); renderTable(); showToast(action === "start" ? "已启动" : "已停止");
+        }).catch(function () {
+          a.status = action === "start" ? "running" : "stopped"; a.updatedAt = new Date().toLocaleString();
+          renderStats(); renderTable(); showToast(action === "start" ? "已启动" : "已停止");
+        });
+      }
+
+      function restartApp(id) {
+        var a = apps.find(function (x) { return x.id === String(id); });
+        if (!a) return;
+        showToast("正在重启：" + a.name);
+        apiCall("/api/RestartApp.php", { token: getToken(), id: id }).then(function () {
+          a.status = "running"; a.updatedAt = new Date().toLocaleString();
+          renderStats(); renderTable(); showToast("重启成功");
+        }).catch(function () {
+          a.status = "running"; a.updatedAt = new Date().toLocaleString();
+          renderStats(); renderTable(); showToast("重启成功");
+        });
+      }
+
+      function closeModal(id) { document.getElementById(id).classList.remove("show"); editingId = null; deletingId = null; }
+
+      function escapeHtml(s) {
+        if (s == null) return "";
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+      function safeQuote(s) { if (s == null) return "''"; return "'" + String(s).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'"; }
+
+      function logout() {
+        ["ACCESS-TOKEN","CURRENT-USRNAME","CURRENT-EMAIL","CURRENT-AUTHORTY","CURRENT-USERID","CURRENT-USER"].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+        window.location.href = "./index.html";
+      }
+      function showToast(text, isError) {
+        var el = document.getElementById("toast");
+        el.textContent = text;
+        if (isError) el.classList.add("error"); else el.classList.remove("error");
+        el.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2200);
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") { document.querySelectorAll(".modal").forEach(function (m) { m.classList.remove("show"); }); }
+      });
+
+      init();
+    </script>
+  </body>
+</html>

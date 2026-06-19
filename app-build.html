@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>诸神黄昏 · 应用构建</title>
+    <style>
+      :root {
+        --gold: #dca01e;
+        --gold-light: #e6b83a;
+        --gold-dark: #8b5a00;
+        --bg-1: #0a0604;
+        --bg-2: #1a0d00;
+        --bg-panel: rgba(12, 8, 2, 0.75);
+        --text: #f2e6c8;
+        --text-dim: #a89462;
+        --text-muted: #7a6a40;
+        --border: rgba(220, 160, 30, 0.2);
+        --border-strong: rgba(220, 160, 30, 0.35);
+        --success: #4caf50;
+        --warning: #ff9800;
+        --danger: #ef4444;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; min-height: 100vh; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", monospace; background: linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 100%); color: var(--text); font-size: 14px; line-height: 1.6; }
+      .layout { min-height: 100vh; display: flex; }
+
+      .sidebar { width: 220px; background: rgba(8,5,2,0.8); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+      .sidebar-logo { padding: 24px 20px; text-align: center; border-bottom: 1px solid var(--border); }
+      .sidebar-logo-title { font-size: 22px; font-weight: 900; letter-spacing: 6px; background: linear-gradient(180deg,#ffd88c 0%,#dca01e 60%,#8b5a00 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .sidebar-logo-sub { margin-top: 6px; font-size: 10px; color: var(--text-dim); letter-spacing: 4px; }
+      .sidebar-menu { flex: 1; padding: 16px 12px; }
+      .menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 4px; border-radius: 2px; color: var(--text-dim); cursor: pointer; font-size: 13px; transition: all 0.15s; user-select: none; }
+      .menu-item:hover { background: rgba(220,160,30,0.08); color: var(--gold-light); }
+      .menu-item.active { background: rgba(220,160,30,0.12); color: var(--gold-light); border-left: 2px solid var(--gold); padding-left: 12px; }
+      .menu-item .icon { width: 16px; height: 16px; flex-shrink: 0; }
+      .sidebar-footer { padding: 16px; font-size: 11px; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border); letter-spacing: 2px; }
+
+      .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+      .topbar { background: rgba(12,8,2,0.6); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+      .breadcrumb { color: var(--text-dim); font-size: 13px; }
+      .breadcrumb .sep { margin: 0 8px; color: var(--text-muted); }
+      .breadcrumb .current { color: var(--text); font-weight: 500; }
+      .user-info { display: flex; align-items: center; gap: 12px; }
+      .user-avatar { width: 34px; height: 34px; border-radius: 2px; background: linear-gradient(135deg,var(--gold-light),var(--gold-dark)); color: #1a0d00; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+      .user-detail { text-align: right; }
+      .user-name { font-size: 13px; color: var(--text); }
+      .user-role { font-size: 11px; color: var(--text-dim); }
+      .logout-btn { margin-left: 12px; padding: 6px 14px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 2px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+      .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+      .content { padding: 20px 24px; flex: 1; }
+      .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+      .page-title { font-size: 17px; font-weight: 700; color: var(--gold-light); letter-spacing: 4px; }
+      .btn { padding: 8px 16px; font-size: 13px; background: rgba(220,160,30,0.1); border: 1px solid var(--border-strong); color: var(--gold-light); border-radius: 2px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+      .btn:hover { background: rgba(220,160,30,0.2); }
+      .btn-primary { background: rgba(220,160,30,0.25); }
+      .btn.danger { border-color: rgba(239,68,68,0.4); color: var(--danger); }
+      .btn.danger:hover { background: rgba(239,68,68,0.1); }
+
+      /* 构建触发卡片 */
+      .trigger-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 2px; padding: 20px; margin-bottom: 16px; }
+      .trigger-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 14px; }
+      .trigger-row .full { grid-column: 1 / -1; }
+      .form-row label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 2px; }
+      .form-input, .form-select { width: 100%; padding: 8px 12px; font-size: 13px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: inherit; outline: none; }
+      .form-input:focus, .form-select:focus { border-color: var(--gold); }
+
+      /* 统计卡片 */
+      .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+      .stat-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 2px; padding: 16px; display: flex; align-items: center; gap: 14px; }
+      .stat-icon { width: 40px; height: 40px; border-radius: 2px; background: rgba(220,160,30,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gold); }
+      .stat-label { font-size: 12px; color: var(--text-dim); letter-spacing: 2px; }
+      .stat-value { font-size: 22px; font-weight: 700; color: var(--gold-light); margin-top: 4px; }
+
+      /* 表格 */
+      .table-wrap { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 2px; overflow-x: auto; }
+      .device-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      .device-table thead { background: rgba(220,160,30,0.08); }
+      .device-table th { padding: 12px 14px; text-align: left; color: var(--gold-light); font-weight: 600; font-size: 12px; letter-spacing: 2px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+      .device-table td { padding: 12px 14px; border-bottom: 1px solid rgba(220,160,30,0.08); color: var(--text); }
+      .device-table tbody tr:hover { background: rgba(220,160,30,0.05); }
+      .device-table tbody tr:last-child td { border-bottom: none; }
+      .code { font-family: Consolas, monospace; color: var(--text-dim); font-size: 12px; }
+
+      .badge { display: inline-block; padding: 3px 10px; font-size: 11px; border-radius: 2px; border: 1px solid var(--border); letter-spacing: 1px; }
+      .badge-success { background: rgba(76,175,80,0.15); border-color: rgba(76,175,80,0.35); color: #8bc88d; }
+      .badge-failed { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.35); color: #f08080; }
+      .badge-building { background: rgba(255,152,0,0.12); border-color: rgba(255,152,0,0.35); color: #ffb74d; }
+      .badge-queued { background: rgba(158,158,158,0.1); border-color: rgba(158,158,158,0.3); color: #bfa978; }
+
+      .row-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+      .row-btn { padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 2px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+      .row-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+      .row-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+      .pagination { display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding: 14px 16px; font-size: 12px; color: var(--text-dim); border-top: 1px solid var(--border); }
+      .page-btn { padding: 5px 12px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 2px; cursor: pointer; font-family: inherit; font-size: 12px; transition: all 0.15s; }
+      .page-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold-light); }
+      .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+      .state-row { padding: 10px 16px; font-size: 12px; color: var(--text-dim); text-align: center; border-top: 1px solid var(--border); background: rgba(220,160,30,0.03); }
+      .state-row.loading { color: var(--gold-light); }
+      .state-row.error { color: var(--danger); }
+
+      .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.72); display: none; align-items: center; justify-content: center; z-index: 1500; }
+      .modal.show { display: flex; }
+      .modal-dialog { background: var(--bg-panel); border: 1px solid var(--border-strong); border-radius: 2px; width: 720px; max-width: calc(100% - 32px); box-shadow: 0 20px 60px rgba(0,0,0,0.7); max-height: 85vh; display: flex; flex-direction: column; }
+      .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+      .modal-title { font-size: 14px; font-weight: 600; color: var(--gold-light); letter-spacing: 4px; }
+      .modal-close { background: none; border: none; color: var(--text-dim); font-size: 20px; cursor: pointer; line-height: 1; padding: 0; }
+      .modal-close:hover { color: var(--text); }
+      .modal-body { padding: 16px 18px; flex: 1; overflow-y: auto; }
+      .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+
+      /* 日志面板 */
+      .log-box {
+        background: #0a0604; border: 1px solid var(--border); border-radius: 2px;
+        padding: 14px; font-family: Consolas, monospace; font-size: 12px;
+        color: #e6dfc5; line-height: 1.7; max-height: 360px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
+      }
+      .log-box .ts { color: #8a7a4a; }
+      .log-box .info { color: #e6b83a; }
+      .log-box .ok { color: #8bc88d; }
+      .log-box .warn { color: #ffb74d; }
+      .log-box .err { color: #f08080; font-weight: 600; }
+      .log-box .step { color: #4fc3f7; font-weight: 600; }
+
+      .info-list { list-style: none; padding: 0; margin: 0 0 14px 0; display: grid; grid-template-columns: repeat(2,1fr); gap: 8px 14px; }
+      .info-list li { font-size: 12px; }
+      .info-list .label { color: var(--text-dim); letter-spacing: 2px; display: inline-block; min-width: 90px; }
+      .info-list .value { color: var(--text); font-family: Consolas, monospace; }
+
+      .progress-wrap { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 2px; height: 22px; overflow: hidden; margin-top: 10px; position: relative; }
+      .progress-bar { height: 100%; background: linear-gradient(90deg, #8b5a00, #dca01e, #ffd88c); transition: width 0.3s; }
+      .progress-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; font-weight: 600; }
+
+      .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-8px); background: var(--bg-panel); border: 1px solid var(--border-strong); padding: 10px 20px; border-radius: 2px; font-size: 13px; color: var(--gold-light); z-index: 2000; opacity: 0; pointer-events: none; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+      .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+      .toast.error { color: var(--danger); border-color: rgba(239,68,68,0.4); }
+
+      @media (max-width: 900px) { .sidebar { display: none; } .stats { grid-template-columns: repeat(2,1fr); } .trigger-row { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-logo"><div class="sidebar-logo-title">诸神黄昏</div><div class="sidebar-logo-sub">设 备 管 理</div></div>
+        <nav class="sidebar-menu">
+          <div class="menu-item" onclick="location.href='./dashboard.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg><span>仪表盘</span></div>
+          <div class="menu-item" onclick="location.href='./devices.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg><span>设备管理</span></div>
+          <div class="menu-item" onclick="location.href='./overseas-devices.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>海外设备</span></div>
+          <div class="menu-item" onclick="location.href='./proxy-management.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg><span>代理管理</span></div>
+          <div class="menu-item" onclick="location.href='./apps-list.html'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><span>应用列表</span></div>
+          <div class="menu-item active"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg><span>应用构建</span></div>
+        </nav>
+        <div class="sidebar-footer">© 诸神黄昏</div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <div class="breadcrumb"><span>首页</span><span class="sep">/</span><span class="current">应用构建</span></div>
+          <div class="user-info">
+            <div class="user-detail"><div class="user-name" id="userName">用户</div><div class="user-role" id="userRole"></div></div>
+            <div class="user-avatar" id="userAvatar">U</div>
+            <button class="logout-btn" onclick="logout()">退出</button>
+          </div>
+        </header>
+
+        <div class="content">
+          <div class="page-header">
+            <div class="page-title">应 用 构 建</div>
+            <button class="btn" onclick="loadBuilds()">刷 新</button>
+          </div>
+
+          <!-- 触发构建卡片 -->
+          <div class="trigger-card">
+            <div style="font-size: 13px; color: var(--gold-light); font-weight: 600; letter-spacing: 3px; margin-bottom: 14px;">触 发 新 构 建</div>
+            <div class="trigger-row">
+              <div class="form-row">
+                <label>应用</label>
+                <select class="form-select" id="buildApp">
+                  <option value="device-monitor">device-monitor</option>
+                  <option value="proxy-manager">proxy-manager</option>
+                  <option value="report-portal">report-portal</option>
+                  <option value="overseas-sync">overseas-sync</option>
+                  <option value="daily-cleanup">daily-cleanup</option>
+                  <option value="new-admin-console">new-admin-console</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label>分支 / 标签</label>
+                <input type="text" class="form-input" id="buildBranch" placeholder="例如：main / v1.2.0" value="main" />
+              </div>
+              <div class="form-row">
+                <label>目标版本</label>
+                <input type="text" class="form-input" id="buildVersion" placeholder="例如：v1.2.1" value="" />
+              </div>
+            </div>
+            <div class="trigger-row">
+              <div class="form-row full">
+                <label>构建说明（可选）</label>
+                <input type="text" class="form-input" id="buildMessage" placeholder="本次构建内容或变更说明" />
+              </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+              <button class="btn" onclick="loadBuilds()">重置</button>
+              <button class="btn btn-primary" onclick="triggerBuild()">开 始 构 建</button>
+            </div>
+          </div>
+
+          <!-- 统计 -->
+          <div class="stats">
+            <div class="stat-card"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div><div><div class="stat-label">总 次 数</div><div class="stat-value" id="kpiTotal">0</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="color:#8bc88d;background:rgba(76,175,80,0.1);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div><div class="stat-label">成 功</div><div class="stat-value" id="kpiSuccess" style="color:#8bc88d;">0</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="color:#f08080;background:rgba(239,68,68,0.1);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg></div><div><div class="stat-label">失 败</div><div class="stat-value" id="kpiFailed" style="color:#f08080;">0</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="color:#ffb74d;background:rgba(255,152,0,0.1);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div><div><div class="stat-label">正 在 进 行</div><div class="stat-value" id="kpiRunning" style="color:#ffb74d;">0</div></div></div>
+          </div>
+
+          <!-- 构建历史 -->
+          <div class="table-wrap">
+            <table class="device-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>构建 ID</th>
+                  <th>应用</th>
+                  <th>版本</th>
+                  <th>分支</th>
+                  <th>状态</th>
+                  <th>耗时</th>
+                  <th>触发时间</th>
+                  <th>操作人</th>
+                  <th style="text-align:right;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="buildTableBody"></tbody>
+            </table>
+            <div class="state-row" id="stateRow">已加载 <b id="totalCount" style="color:var(--gold-light);">0</b> 条构建记录</div>
+            <div class="pagination">
+              <button class="page-btn" id="prevBtn" onclick="changePage(-1)">上一页</button>
+              <span>第 <b id="currentPage">1</b> / <span id="totalPages">1</span> 页</span>
+              <button class="page-btn" id="nextBtn" onclick="changePage(1)">下一页</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 构建详情 / 日志 Modal -->
+    <div class="modal" id="detailModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <span class="modal-title" id="detailTitle">构 建 详 情</span>
+          <button class="modal-close" onclick="closeModal('detailModal')">×</button>
+        </div>
+        <div class="modal-body" id="detailBody"></div>
+        <div class="modal-footer">
+          <button class="btn" onclick="closeModal('detailModal')">关 闭</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const API_BASE = "";
+      function apiCall(path, body) {
+        return fetch(API_BASE + path, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }).then(function (r) { return r.json(); });
+      }
+      function getToken() { return localStorage.getItem("ACCESS-TOKEN") || ""; }
+
+      var builds = [];
+      var currentPage = 1;
+      var toastTimer = null;
+      var activeBuildId = null;
+      var activeBuildTimer = null;
+
+      var defaultBuilds = [
+        { id: "#B-20250620-001", app: "device-monitor", version: "v1.2.0", branch: "main", status: "success", duration: "48s", time: "2025-06-20 09:12:11", operator: "admin" },
+        { id: "#B-20250620-002", app: "proxy-manager", version: "v0.8.3", branch: "main", status: "success", duration: "55s", time: "2025-06-20 09:15:33", operator: "admin" },
+        { id: "#B-20250620-003", app: "new-admin-console", version: "v3.0.0-beta.1", branch: "feature/v3", status: "building", duration: "00:42", time: "2025-06-20 09:45:55", operator: "admin" },
+        { id: "#B-20250619-007", app: "report-portal", version: "v2.0.1", branch: "release/v2", status: "failed", duration: "2m 11s", time: "2025-06-19 22:08:01", operator: "devops" },
+        { id: "#B-20250619-006", app: "overseas-sync", version: "v1.0.5", branch: "main", status: "success", duration: "1m 03s", time: "2025-06-19 18:34:22", operator: "admin" },
+        { id: "#B-20250619-005", app: "daily-cleanup", version: "v0.3.0", branch: "main", status: "success", duration: "22s", time: "2025-06-19 14:11:18", operator: "admin" },
+        { id: "#B-20250618-004", app: "device-monitor", version: "v1.1.9", branch: "main", status: "success", duration: "45s", time: "2025-06-18 16:44:10", operator: "devops" },
+        { id: "#B-20250618-003", app: "proxy-manager", version: "v0.8.2", branch: "main", status: "success", duration: "52s", time: "2025-06-18 11:10:01", operator: "admin" },
+        { id: "#B-20250617-002", app: "report-portal", version: "v2.0.0", branch: "release/v2", status: "success", duration: "1m 20s", time: "2025-06-17 20:55:43", operator: "admin" },
+        { id: "#B-20250617-001", app: "new-admin-console", version: "v3.0.0-alpha", branch: "feature/v3", status: "queued", duration: "-", time: "2025-06-17 08:22:11", operator: "devops" }
+      ];
+
+      function init() {
+        var token = getToken();
+        if (!token) { window.location.href = "./index.html"; return; }
+        var usr = localStorage.getItem("CURRENT-USRNAME") || "用户";
+        var role = localStorage.getItem("CURRENT-AUTHORTY") || "";
+        document.getElementById("userName").textContent = usr;
+        document.getElementById("userRole").textContent = role;
+        document.getElementById("userAvatar").textContent = usr.charAt(0).toUpperCase();
+
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("id")) {
+          var existing = defaultBuilds.map(function (b) { return b.app; });
+          if (existing.indexOf(urlParams.get("id")) === -1) {
+            // 以参数作为应用名预填
+            document.getElementById("buildApp").value = urlParams.get("id");
+          }
+        }
+
+        loadBuilds();
+      }
+
+      function loadBuilds() {
+        var state = document.getElementById("stateRow");
+        state.className = "state-row loading"; state.textContent = "正在加载构建记录...";
+        apiCall("/api/ListBuilds.php", { token: getToken() }).then(function (result) {
+          var list = null;
+          if (result && result.Success && Array.isArray(result.Success)) list = result.Success;
+          else if (Array.isArray(result)) list = result;
+          else if (result && result.data && Array.isArray(result.data)) list = result.data;
+          if (list && list.length > 0) builds = list;
+          else builds = defaultBuilds;
+          state.textContent = "";
+          document.getElementById("totalCount").textContent = builds.length;
+          renderStats(); renderTable();
+        }).catch(function () {
+          builds = defaultBuilds;
+          document.getElementById("totalCount").textContent = builds.length;
+          renderStats(); renderTable();
+        });
+      }
+
+      function renderStats() {
+        document.getElementById("kpiTotal").textContent = builds.length;
+        document.getElementById("kpiSuccess").textContent = builds.filter(function (b) { return b.status === "success"; }).length;
+        document.getElementById("kpiFailed").textContent = builds.filter(function (b) { return b.status === "failed"; }).length;
+        document.getElementById("kpiRunning").textContent = builds.filter(function (b) { return b.status === "building" || b.status === "queued"; }).length;
+      }
+
+      function renderTable() {
+        var pageSize = 10;
+        var totalPages = Math.max(1, Math.ceil(builds.length / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+        document.getElementById("currentPage").textContent = currentPage;
+        document.getElementById("totalPages").textContent = totalPages;
+
+        var tbody = document.getElementById("buildTableBody");
+        if (builds.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px 0;color:var(--text-muted);font-size:12px;">暂无构建记录</td></tr>';
+          document.getElementById("prevBtn").disabled = true;
+          document.getElementById("nextBtn").disabled = true;
+          return;
+        }
+        var start = (currentPage - 1) * pageSize;
+        var pageItems = builds.slice(start, start + pageSize);
+        tbody.innerHTML = pageItems.map(function (b, i) {
+          var statusText = { success: "成功", failed: "失败", building: "构建中", queued: "排队中" }[b.status] || b.status;
+          var statusCls = { success: "badge-success", failed: "badge-failed", building: "badge-building", queued: "badge-queued" }[b.status];
+          var actions = '<button class="row-btn" onclick="openDetail(' + safeQuote(b.id) + ')">日志</button>';
+          if (b.status === "building") actions += '<button class="row-btn danger" onclick="cancelBuild(' + safeQuote(b.id) + ')">取消</button>';
+          if (b.status === "success") actions += '<button class="row-btn" onclick="publishBuild(' + safeQuote(b.id) + ')">发布</button>';
+          if (b.status === "failed") actions += '<button class="row-btn" onclick="retryBuild(' + safeQuote(b.app) + ', ' + safeQuote(b.branch) + ')">重试</button>';
+          return '<tr>' +
+            '<td style="color:var(--text-muted);font-size:12px;">' + (start + i + 1) + '</td>' +
+            '<td class="code">' + escapeHtml(b.id) + '</td>' +
+            '<td><b>' + escapeHtml(b.app) + '</b></td>' +
+            '<td class="code">' + escapeHtml(b.version) + '</td>' +
+            '<td class="code">' + escapeHtml(b.branch) + '</td>' +
+            '<td><span class="badge ' + statusCls + '">' + statusText + '</span></td>' +
+            '<td class="code">' + escapeHtml(b.duration) + '</td>' +
+            '<td style="color:var(--text-muted);font-size:12px;">' + escapeHtml(b.time) + '</td>' +
+            '<td>' + escapeHtml(b.operator) + '</td>' +
+            '<td style="text-align:right;"><div class="row-actions">' + actions + '</div></td>' +
+            '</tr>';
+        }).join("");
+        document.getElementById("prevBtn").disabled = currentPage <= 1;
+        document.getElementById("nextBtn").disabled = currentPage >= totalPages;
+      }
+
+      function changePage(delta) { currentPage += delta; renderTable(); }
+
+      // === 触发构建 ===
+      function triggerBuild() {
+        var app = document.getElementById("buildApp").value;
+        var branch = document.getElementById("buildBranch").value || "main";
+        var version = document.getElementById("buildVersion").value.trim() || ("v" + new Date().toISOString().slice(0,10).replace(/-/g, "") + "-dev");
+        var msg = document.getElementById("buildMessage").value || "手动触发构建";
+        if (!app) { showToast("请选择应用", true); return; }
+
+        var newId = "#B-" + Date.now().toString().slice(-10);
+        showToast("正在启动构建：" + newId);
+
+        apiCall("/api/TriggerBuild.php", { token: getToken(), app: app, branch: branch, version: version, message: msg }).then(function () {
+          addNewBuild(newId, app, branch, version);
+        }).catch(function () {
+          addNewBuild(newId, app, branch, version);
+        });
+      }
+
+      function addNewBuild(id, app, branch, version) {
+        var newBuild = { id: id, app: app, version: version, branch: branch, status: "building", duration: "00:01", time: new Date().toLocaleString(), operator: localStorage.getItem("CURRENT-USRNAME") || "admin" };
+        builds.unshift(newBuild);
+        renderStats(); renderTable();
+        // 模拟构建过程
+        simulateBuild(id);
+        // 自动打开日志
+        openDetail(id);
+      }
+
+      function simulateBuild(id) {
+        if (activeBuildTimer && activeBuildId === id) clearInterval(activeBuildTimer);
+        activeBuildId = id;
+        var seconds = 0;
+        activeBuildTimer = setInterval(function () {
+          seconds += 2;
+          var b = builds.find(function (x) { return x.id === id; });
+          if (!b) { clearInterval(activeBuildTimer); return; }
+          if (b.status !== "building") { clearInterval(activeBuildTimer); return; }
+          b.duration = String(Math.floor(seconds / 60)).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0");
+          if (seconds >= 30) {
+            // 90% 成功
+            b.status = Math.random() > 0.1 ? "success" : "failed";
+            b.duration = seconds + "s";
+            clearInterval(activeBuildTimer);
+          }
+          renderStats(); renderTable();
+          // 如果详情窗口打开，刷新
+          var modal = document.getElementById("detailModal");
+          if (modal.classList.contains("show") && b.id === document.getElementById("detailTitle").dataset.buildId) openDetail(b.id);
+        }, 1500);
+      }
+
+      // === 详情 / 日志 ===
+      function openDetail(id) {
+        var b = builds.find(function (x) { return x.id === id; });
+        if (!b) return;
+        var titleEl = document.getElementById("detailTitle");
+        titleEl.textContent = "构 建 日 志 · " + b.id;
+        titleEl.dataset.buildId = b.id;
+        document.getElementById("detailBody").innerHTML = renderDetailBody(b);
+        document.getElementById("detailModal").classList.add("show");
+      }
+
+      function renderDetailBody(b) {
+        var isBuilding = b.status === "building";
+        var pct = 0;
+        if (b.status === "success") pct = 100;
+        else if (b.status === "failed") pct = Math.floor(Math.random() * 30 + 40);
+        else if (b.status === "queued") pct = 0;
+        else pct = Math.min(95, 30 + Math.floor(Math.random() * 50));
+
+        var logLines = generateLog(b);
+        return '<ul class="info-list">' +
+          '<li><span class="label">应用</span><span class="value">' + escapeHtml(b.app) + '</span></li>' +
+          '<li><span class="label">版本</span><span class="value">' + escapeHtml(b.version) + '</span></li>' +
+          '<li><span class="label">分支</span><span class="value">' + escapeHtml(b.branch) + '</span></li>' +
+          '<li><span class="label">状态</span><span class="value">' + escapeHtml(b.status) + '</span></li>' +
+          '<li><span class="label">耗时</span><span class="value">' + escapeHtml(b.duration) + '</span></li>' +
+          '<li><span class="label">触发时间</span><span class="value">' + escapeHtml(b.time) + '</span></li>' +
+          '<li><span class="label">操作人</span><span class="value">' + escapeHtml(b.operator) + '</span></li>' +
+          '<li><span class="label">构建 ID</span><span class="value">' + escapeHtml(b.id) + '</span></li>' +
+          '</ul>' +
+          '<div class="form-row" style="margin-bottom:10px;"><label>构 建 进 度</label>' +
+          '<div class="progress-wrap"><div class="progress-bar" style="width:' + pct + '%;"></div><div class="progress-text">' + pct + '%</div></div>' +
+          '</div>' +
+          '<div class="form-row"><label>实 时 日 志' + (isBuilding ? '（正在输出…）' : '') + '</label>' +
+          '<div class="log-box">' + logLines + '</div>' +
+          '</div>';
+      }
+
+      function generateLog(b) {
+        var ts = function (offset) {
+          var d = new Date(b.time.replace(/-/g, "/"));
+          if (offset) d = new Date(d.getTime() + offset);
+          return d.toLocaleTimeString();
+        };
+        var lines = [
+          { t: 0, cls: "step", msg: "==> 步骤 1/5：拉取最新代码" },
+          { t: 2000, cls: "info", msg: "$ git fetch origin && git checkout " + b.branch },
+          { t: 3200, cls: "ok", msg: "Switched to branch '" + b.branch + "'" },
+          { t: 5000, cls: "step", msg: "==> 步骤 2/5：安装依赖" },
+          { t: 6800, cls: "info", msg: "正在解析 package.json / requirements.txt / pom.xml ..." },
+          { t: 9500, cls: "ok", msg: "已成功安装 384 个依赖（耗时 12.4s）" },
+          { t: 11000, cls: "step", msg: "==> 步骤 3/5：执行静态检查" },
+          { t: 13500, cls: "ok", msg: "Lint 检查通过（0 错误 / 0 警告）" },
+          { t: 15500, cls: "ok", msg: "单元测试通过（238 passed, 0 failed）" },
+          { t: 18000, cls: "step", msg: "==> 步骤 4/5：编译与打包" },
+          { t: 20000, cls: "info", msg: "正在生成构建产物：" + b.app + "-" + b.version + ".tar.gz" },
+          { t: 22000, cls: "warn", msg: "警告：生成产物体积接近上限 28 MB (阈值 32 MB)" }
+        ];
+        if (b.status === "failed") {
+          lines.push({ t: 24000, cls: "err", msg: "ERROR: 构建脚本失败（exit code 1）。具体错误：测试文件 ./test/remote.spec.js 断言失败，期望 200 得到 500。" });
+          lines.push({ t: 26000, cls: "err", msg: "==> 构建失败。请查看完整日志排查。" });
+        } else if (b.status === "building") {
+          lines.push({ t: 23000, cls: "info", msg: "（正在继续执行…）" });
+        } else if (b.status === "queued") {
+          lines = [{ t: 0, cls: "info", msg: "排队中：等待当前任务完成..." }];
+        } else {
+          lines.push({ t: 24000, cls: "ok", msg: "构建产物已打包完成：" + b.app + "-" + b.version + ".tar.gz（27.8 MB）" });
+          lines.push({ t: 26000, cls: "step", msg: "==> 步骤 5/5：上传与签名" });
+          lines.push({ t: 28000, cls: "ok", msg: "构建结果已上传至构件仓库，SHA-256 校验通过。" });
+          lines.push({ t: 30000, cls: "ok", msg: "==> 构建完成：SUCCESS (用时 " + (b.duration) + ")" });
+        }
+        return lines.map(function (l) {
+          return '<span class="ts">[' + ts(l.t) + ']</span> <span class="' + l.cls + '">' + escapeHtml(l.msg) + '</span>';
+        }).join("\n");
+      }
+
+      function retryBuild(app, branch) {
+        var newId = "#B-" + Date.now().toString().slice(-10);
+        showToast("重新构建：" + app);
+        apiCall("/api/TriggerBuild.php", { token: getToken(), app: app, branch: branch }).then(function () {
+          addNewBuild(newId, app, branch, nextVersionFor(app));
+        }).catch(function () {
+          addNewBuild(newId, app, branch, nextVersionFor(app));
+        });
+      }
+
+      function nextVersionFor(app) {
+        var last = builds.find(function (b) { return b.app === app; });
+        if (!last) return "v0.1.0";
+        var m = last.version.match(/^v?(\d+)\.(\d+)\.(\d+)/);
+        if (!m) return last.version + "-retry";
+        return "v" + m[1] + "." + m[2] + "." + (parseInt(m[3], 10) + 1);
+      }
+
+      function cancelBuild(id) {
+        var b = builds.find(function (x) { return x.id === id; });
+        if (!b) return;
+        showToast("已取消构建：" + id);
+        b.status = "failed"; b.duration = b.duration || "取消";
+        renderStats(); renderTable();
+        if (activeBuildId === id && activeBuildTimer) clearInterval(activeBuildTimer);
+      }
+
+      function publishBuild(id) {
+        var b = builds.find(function (x) { return x.id === id; });
+        if (!b) return;
+        showToast("正在发布：" + b.app + " " + b.version);
+        apiCall("/api/PublishBuild.php", { token: getToken(), id: id }).then(function () { showToast("发布成功"); }).catch(function () { showToast("发布成功（模拟）"); });
+      }
+
+      function closeModal(id) { document.getElementById(id).classList.remove("show"); }
+
+      function escapeHtml(s) {
+        if (s == null) return "";
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+      function safeQuote(s) {
+        if (s == null) return "''";
+        return "'" + String(s).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'";
+      }
+
+      function logout() {
+        ["ACCESS-TOKEN","CURRENT-USRNAME","CURRENT-EMAIL","CURRENT-AUTHORTY","CURRENT-USERID","CURRENT-USER"].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+        window.location.href = "./index.html";
+      }
+
+      function showToast(text, isError) {
+        var el = document.getElementById("toast");
+        el.textContent = text;
+        if (isError) el.classList.add("error"); else el.classList.remove("error");
+        el.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2200);
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") { document.querySelectorAll(".modal").forEach(function (m) { m.classList.remove("show"); }); }
+      });
+
+      init();
+    </script>
+  </body>
+</html>
