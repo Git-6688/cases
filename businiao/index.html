@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 · 不死鸟</title>
+    <link rel="stylesheet" href="./styles/common.css">
+    <link rel="stylesheet" href="./styles/login.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23dc2626'/><circle cx='50' cy='50' r='18' fill='%23000'/></svg>">
+</head>
+<body>
+    <div class="login-page">
+
+        <!-- 背景装饰：左右两个写轮眼 + 风格化头像 -->
+        <div class="login-bg">
+            <div class="login-bg-left">
+                <div class="deco-char">
+                    <!-- 鼬 · 写轮眼 + 风格化头部剪影 -->
+                    <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="itachiGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#dc2626" stop-opacity="0.8"/>
+                                <stop offset="60%" stop-color="#7f1d1d" stop-opacity="0.3"/>
+                                <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+                            </radialGradient>
+                            <linearGradient id="itachiHair" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#1f1f1f"/>
+                                <stop offset="100%" stop-color="#000"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- 光晕 -->
+                        <circle cx="150" cy="150" r="140" fill="url(#itachiGlow)"/>
+                        <!-- 脸部阴影 -->
+                        <ellipse cx="150" cy="175" rx="55" ry="65" fill="#f5f5f5" opacity="0.08"/>
+                        <!-- 头发剪影 -->
+                        <path d="M 95 130 Q 100 60 150 55 Q 200 60 205 130 Q 210 100 195 85 Q 170 95 150 90 Q 130 95 105 85 Q 90 100 95 130 Z" fill="url(#itachiHair)" opacity="0.85"/>
+                        <!-- 左写轮眼 -->
+                        <g transform="translate(125, 170)">
+                            <circle cx="0" cy="0" r="18" fill="#fff" opacity="0.05"/>
+                            <circle cx="0" cy="0" r="14" fill="#dc2626" opacity="0.9"/>
+                            <circle cx="0" cy="0" r="5" fill="#000"/>
+                            <g transform="translate(0,0)">
+                                <path d="M 0 -5 Q -8 -8 -7 -13 Q -3 -10 0 -5" fill="#000"/>
+                            </g>
+                            <g transform="rotate(120)">
+                                <path d="M 0 -5 Q -8 -8 -7 -13 Q -3 -10 0 -5" fill="#000"/>
+                            </g>
+                            <g transform="rotate(240)">
+                                <path d="M 0 -5 Q -8 -8 -7 -13 Q -3 -10 0 -5" fill="#000"/>
+                            </g>
+                            <circle cx="0" cy="0" r="14" fill="none" stroke="#000" stroke-width="1" opacity="0.6"/>
+                        </g>
+                        <!-- 右写轮眼 -->
+                        <g transform="translate(175, 170)">
+                            <circle cx="0" cy="0" r="18" fill="#fff" opacity="0.05"/>
+                            <circle cx="0" cy="0" r="14" fill="#dc2626" opacity="0.9"/>
+                            <circle cx="0" cy="0" r="5" fill="#000"/>
+                            <g transform="translate(0,0)">
+                                <path d="M 0 -5 Q -8 -8 -7 -13 Q -3 -10 0 -5" fill="#000"/>
+                            </g>
+                            <g transform="rotate(120)">
+                                <path d="M 0 -5 Q -8 -8 -7 -13 Q -3 -10 0 -5" fill="#000"/>
+                            </g>
+                            <g transform="rotate(240)">
+                                <path d="M 0 -5 Q -8 -8 -7 -13 Q -3 -10 0 -5" fill="#000"/>
+                            </g>
+                            <circle cx="0" cy="0" r="14" fill="none" stroke="#000" stroke-width="1" opacity="0.6"/>
+                        </g>
+                        <!-- 护额划痕 -->
+                        <rect x="95" y="118" width="110" height="22" fill="#2a2a2a" rx="2"/>
+                        <path d="M 120 118 L 130 140 M 145 118 L 155 140 M 170 118 L 180 140" stroke="#dc2626" stroke-width="1.5" opacity="0.7"/>
+                        <!-- 名字标识 -->
+                        <text x="150" y="260" text-anchor="middle" font-family="serif" font-size="14" fill="#e6af37" opacity="0.7" letter-spacing="8">ITACHI</text>
+                    </svg>
+                    <div class="flame-ribbon top"></div>
+                    <div class="flame-ribbon bot"></div>
+                </div>
+            </div>
+
+            <div class="login-bg-right">
+                <div class="deco-char" style="opacity: 0.5;">
+                    <!-- 佐助 · 万花筒写轮眼风格 -->
+                    <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="sasukeGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#e6af37" stop-opacity="0.5"/>
+                                <stop offset="60%" stop-color="#dc2626" stop-opacity="0.3"/>
+                                <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <!-- 光晕 -->
+                        <circle cx="150" cy="150" r="140" fill="url(#sasukeGlow)"/>
+                        <!-- 脸部阴影 -->
+                        <ellipse cx="150" cy="175" rx="55" ry="65" fill="#f5f5f5" opacity="0.08"/>
+                        <!-- 头发剪影（佐助标志性发型） -->
+                        <path d="M 90 140 L 100 70 L 115 110 L 130 60 L 140 115 L 150 55 L 160 115 L 170 60 L 185 110 L 200 70 L 210 140 Q 210 100 195 85 Q 170 95 150 90 Q 130 95 105 85 Q 90 100 90 140 Z" fill="#1a1a1a" opacity="0.9"/>
+                        <!-- 六芒星写轮眼 左 -->
+                        <g transform="translate(125, 172)">
+                            <circle cx="0" cy="0" r="18" fill="#fff" opacity="0.05"/>
+                            <circle cx="0" cy="0" r="14" fill="#b91c1c"/>
+                            <g stroke="#000" stroke-width="1.5" fill="#000">
+                                <path d="M 0 -12 L 3 0 L 0 12 L -3 0 Z"/>
+                                <path d="M -12 0 L 0 -3 L 12 0 L 0 3 Z"/>
+                                <path d="M -8 -8 L 3 -3 L 8 8 L -3 3 Z" opacity="0.6"/>
+                            </g>
+                            <circle cx="0" cy="0" r="4" fill="#000"/>
+                        </g>
+                        <!-- 六芒星写轮眼 右 -->
+                        <g transform="translate(175, 172)">
+                            <circle cx="0" cy="0" r="18" fill="#fff" opacity="0.05"/>
+                            <circle cx="0" cy="0" r="14" fill="#b91c1c"/>
+                            <g stroke="#000" stroke-width="1.5" fill="#000">
+                                <path d="M 0 -12 L 3 0 L 0 12 L -3 0 Z"/>
+                                <path d="M -12 0 L 0 -3 L 12 0 L 0 3 Z"/>
+                                <path d="M -8 -8 L 3 -3 L 8 8 L -3 3 Z" opacity="0.6"/>
+                            </g>
+                            <circle cx="0" cy="0" r="4" fill="#000"/>
+                        </g>
+                        <!-- 衣领线条 -->
+                        <path d="M 110 240 L 150 220 L 190 240" stroke="#e6af37" stroke-width="1.5" fill="none" opacity="0.5"/>
+                        <!-- 名字标识 -->
+                        <text x="150" y="260" text-anchor="middle" font-family="serif" font-size="14" fill="#dc2626" opacity="0.75" letter-spacing="8">SASUKE</text>
+                    </svg>
+                    <div class="flame-ribbon top"></div>
+                    <div class="flame-ribbon bot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 跳过按钮 -->
+        <button class="skip-btn" onclick="skipLogin()">跳过 ›</button>
+
+        <!-- 主体 -->
+        <div class="login-wrap">
+            <!-- Logo 标题区 -->
+            <div class="login-logo-wrap">
+                <svg class="login-logo-img" viewBox="0 0 400 90" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="textGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#fca5a5"/>
+                            <stop offset="40%" stop-color="#dc2626"/>
+                            <stop offset="100%" stop-color="#7f1d1d"/>
+                        </linearGradient>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#7f1d1d" stop-opacity="0"/>
+                            <stop offset="50%" stop-color="#e6af37" stop-opacity="0.8"/>
+                            <stop offset="100%" stop-color="#7f1d1d" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- 两侧小符号 -->
+                    <g transform="translate(60, 45)">
+                        <circle cx="0" cy="0" r="12" fill="#dc2626" opacity="0.9"/>
+                        <circle cx="0" cy="0" r="4" fill="#000"/>
+                    </g>
+                    <g transform="translate(340, 45)">
+                        <circle cx="0" cy="0" r="12" fill="#dc2626" opacity="0.9"/>
+                        <circle cx="0" cy="0" r="4" fill="#000"/>
+                    </g>
+                    <!-- 主标题 -->
+                    <text x="200" y="55" text-anchor="middle" font-family="'STKaiti','KaiTi','serif'" font-size="42" font-weight="900" fill="url(#textGrad)" letter-spacing="12" style="text-shadow: 0 0 24px rgba(220, 38, 38, 0.55), 0 4px 16px rgba(0,0,0,0.8);">不 死 鸟</text>
+                    <line x1="40" y1="78" x2="360" y2="78" stroke="url(#goldGrad)" stroke-width="1"/>
+                </svg>
+                <div class="sub-en">DEVICE MANAGEMENT</div>
+            </div>
+
+            <!-- 登录面板 -->
+            <div class="login-panel">
+                <div class="panel-header">
+                    <div class="panel-title-text">账 号 登 录</div>
+                </div>
+
+                <form class="login-form" onsubmit="handleLogin(event)" id="loginForm">
+                    <!-- 用户名 -->
+                    <div class="field-wrap">
+                        <div class="field-input-wrap" id="usernameWrap">
+                            <div class="field-prefix-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <input type="text" class="custom-input" id="username" name="username" placeholder="请输入用户名" autocomplete="username"
+                                onfocus="wrapFocus('usernameWrap', true)" onblur="wrapFocus('usernameWrap', false)">
+                        </div>
+                    </div>
+
+                    <!-- 密码 -->
+                    <div class="field-wrap">
+                        <div class="field-input-wrap" id="passwordWrap">
+                            <div class="field-prefix-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </div>
+                            <input type="password" class="custom-input" id="password" name="password" placeholder="请输入密码" autocomplete="current-password"
+                                onfocus="wrapFocus('passwordWrap', true)" onblur="wrapFocus('passwordWrap', false)"
+                                onkeydown="handlePwdKey(event)">
+                            <div class="field-suffix-icon" onclick="togglePassword()" title="显示/隐藏密码">
+                                <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 登录按钮 -->
+                    <button type="submit" class="fire-btn" id="loginBtn">登 录</button>
+
+                    <div class="login-tip" id="loginTip"></div>
+                </form>
+
+                <div class="panel-footer">© 不死鸟 · 设备管理系统 · 宇智波一族秘传</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./scripts/login.js"></script>
+</body>
+</html>
