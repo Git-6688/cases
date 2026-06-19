@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 · 不死鸟</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%23dc2626'/%3E%3Ccircle cx='50' cy='50' r='26' fill='%23000'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%23dc2626'/%3E%3Ctomoe xmlns=''/ %3E%3C/svg%3E">
+    <link rel="stylesheet" href="./styles/login.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="bg-embers" id="bgEmbers"></div>
+        <div class="bg-gradient"></div>
+
+        <div class="skip-wrap">
+            <button class="skip-btn" onclick="skipLogin()">跳过 ›</button>
+        </div>
+
+        <div class="login-wrap card-enter">
+            <div class="login-logo-wrap">
+                <div class="title-main">
+                    <span class="t-char">不</span>
+                    <span class="t-char">死</span>
+                    <span class="t-char">鸟</span>
+                </div>
+                <div class="title-sub">PHOENIX · 设备管理系统</div>
+                <div class="title-divider">
+                    <span class="dot"></span>
+                    <span class="line"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+
+            <div class="login-panel">
+                <div class="panel-header">
+                    <div class="uchiha-crest">
+                        <svg viewBox="0 0 60 60" width="48" height="48">
+                            <defs>
+                                <radialGradient id="eyeG" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#fca5a5"/>
+                                    <stop offset="50%" stop-color="#dc2626"/>
+                                    <stop offset="100%" stop-color="#7f1d1d"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="30" cy="30" r="26" fill="url(#eyeG)" stroke="#000" stroke-width="1.5"/>
+                            <circle cx="30" cy="30" r="16" fill="none" stroke="#000" stroke-width="1.2" opacity="0.85"/>
+                            <circle cx="30" cy="30" r="7" fill="#000"/>
+                            <g transform="translate(30 30)" fill="#000" opacity="0.9">
+                                <path d="M0 -12 C -2 -8 -4 -7 -6 -5 C -3 -6 -1 -8 0 -12 Z"/>
+                                <path d="M0 -12 C 2 -8 4 -7 6 -5 C 3 -6 1 -8 0 -12 Z" transform="rotate(120)"/>
+                                <path d="M0 -12 C 2 -8 4 -7 6 -5 C 3 -6 1 -8 0 -12 Z" transform="rotate(240)"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="panel-title">账 号 登 录</div>
+                    <div class="panel-sub">Authentication Required</div>
+                </div>
+
+                <form class="login-form" onsubmit="handleLogin(event)">
+                    <div class="field-wrap">
+                        <label class="field-label">用户名</label>
+                        <div class="field-input-wrap" id="usernameWrap">
+                            <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            <input type="text" class="custom-input" id="username" name="username" placeholder="请输入用户名" autocomplete="username">
+                        </div>
+                    </div>
+
+                    <div class="field-wrap">
+                        <label class="field-label">密码</label>
+                        <div class="field-input-wrap" id="passwordWrap">
+                            <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <input type="password" class="custom-input" id="password" name="password" placeholder="请输入密码" autocomplete="current-password">
+                            <button type="button" class="eye-btn" id="eyeBtn" onclick="togglePassword()">
+                                <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="field-hint">提示：admin / <b style="color:#fca5a5">Aa223366</b></div>
+
+                    <button type="submit" class="fire-btn" id="loginBtn">
+                        <span class="fire-btn-text">登 录</span>
+                    </button>
+                </form>
+
+                <div class="panel-footer">
+                    <div class="char-row">
+                        <div class="char-card">
+                            <svg viewBox="0 0 80 80" width="56" height="56">
+                                <defs>
+                                    <linearGradient id="itachiG" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#1f2937"/>
+                                        <stop offset="100%" stop-color="#0f172a"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="40" cy="40" r="36" fill="url(#itachiG)"/>
+                                <ellipse cx="40" cy="28" rx="14" ry="16" fill="#4b5563"/>
+                                <path d="M 26 32 Q 28 38 32 36 L 26 40 Z" fill="#111827"/>
+                                <path d="M 54 32 Q 52 38 48 36 L 54 40 Z" fill="#111827"/>
+                                <circle cx="33" cy="34" r="3" fill="#dc2626"/>
+                                <circle cx="47" cy="34" r="3" fill="#dc2626"/>
+                                <circle cx="33" cy="34" r="1" fill="#000"/>
+                                <circle cx="47" cy="34" r="1" fill="#000"/>
+                                <path d="M 30 48 Q 40 52 50 48" stroke="#e5e7eb" stroke-width="1.5" fill="none"/>
+                                <path d="M 22 22 L 28 26 L 24 32" stroke="#6b7280" stroke-width="1.2" fill="none"/>
+                                <path d="M 58 22 L 52 26 L 56 32" stroke="#6b7280" stroke-width="1.2" fill="none"/>
+                            </svg>
+                            <div class="char-name">宇智波鼬</div>
+                            <div class="char-title">ITACHI</div>
+                        </div>
+                        <div class="vs-wrap">
+                            <div class="vs-line"></div>
+                            <div class="vs-text">忍</div>
+                            <div class="vs-line"></div>
+                        </div>
+                        <div class="char-card">
+                            <svg viewBox="0 0 80 80" width="56" height="56">
+                                <defs>
+                                    <linearGradient id="sasukeG" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#1e1b4b"/>
+                                        <stop offset="100%" stop-color="#0f172a"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="40" cy="40" r="36" fill="url(#sasukeG)"/>
+                                <path d="M 22 22 Q 40 10 58 22 L 58 38 L 22 38 Z" fill="#1f2937"/>
+                                <ellipse cx="40" cy="36" rx="13" ry="14" fill="#4b5563"/>
+                                <circle cx="32" cy="38" r="3.5" fill="#a855f7"/>
+                                <circle cx="48" cy="38" r="3.5" fill="#a855f7"/>
+                                <circle cx="32" cy="38" r="1.2" fill="#000"/>
+                                <circle cx="48" cy="38" r="1.2" fill="#000"/>
+                                <path d="M 32 50 L 36 48 L 40 50 L 44 48 L 48 50" stroke="#e5e7eb" stroke-width="1.2" fill="none"/>
+                                <path d="M 58 24 Q 68 30 66 44" stroke="#6b7280" stroke-width="1.4" fill="none"/>
+                            </svg>
+                            <div class="char-name">宇智波佐助</div>
+                            <div class="char-title">SASUKE</div>
+                        </div>
+                    </div>
+                    <div class="footer-copy">© 2026 不死鸟 Phoenix Device Management</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./scripts/login.js"></script>
+</body>
+</html>
