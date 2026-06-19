@@ -27,12 +27,24 @@
     inset: 0;
     background-image:
         url("../images/bg.jpg"),
-        radial-gradient(ellipse at 30% 40%, rgba(180, 110, 10, 0.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 70% 60%, rgba(80, 40, 0, 0.35) 0%, transparent 60%),
+        url("../images/bg.png"),
+        url("../images/bg.jpeg"),
         linear-gradient(135deg, #1a0d00 0%, #2d1800 50%, #1a0d00 100%);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    filter: saturate(0.85) contrast(1.08);
+}
+
+.login-bg-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(20, 10, 0, 0.35) 0%, transparent 30%, rgba(10, 5, 0, 0.55) 100%),
+        radial-gradient(ellipse at 30% 40%, rgba(180, 110, 10, 0.22) 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 65%, rgba(100, 50, 0, 0.25) 0%, transparent 60%);
+    pointer-events: none;
 }
 
 .login-bg-image::before {
