@@ -612,6 +612,18 @@ input {
     </div>
 
     <script>
+// ⚙️ API 基地址。部署后如果 API 在同源服务器，保持 "" 即可。
+// 如果 API 在别的域名（例如 https://1jiangjun.com），请改成该域名。
+const API_BASE = "";
+
+function apiCall(path, body) {
+    return fetch(API_BASE + path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    }).then(r => r.json());
+}
+
 function wrapFocus(id, focused) {
     const el = document.getElementById(id);
     if (el) {
@@ -630,9 +642,6 @@ function skipLogin() {
     window.location.href = "./devices.html";
 }
 
-const CORRECT_USER = "admin";
-const CORRECT_PASS = "Aa223366";
-
 function showFieldError(wrapId) {
     const wrap = document.getElementById(wrapId);
     wrap.classList.add("error");
@@ -649,10 +658,10 @@ function showTip(msg) {
     }
     tip.textContent = msg;
     clearTimeout(tip._t);
-    tip._t = setTimeout(() => (tip.textContent = ""), 2400);
+    tip._t = setTimeout(() => (tip.textContent = ""), 2800);
 }
 
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
@@ -665,20 +674,50 @@ function handleLogin(event) {
     if (!username) { showFieldError("usernameWrap"); return; }
     if (!password) { showFieldError("passwordWrap"); return; }
 
-    if (username !== CORRECT_USER || password !== CORRECT_PASS) {
-        showFieldError("usernameWrap");
-        showFieldError("passwordWrap");
-        showTip("账号或密码错误");
-        return;
-    }
-
     const btn = document.getElementById("loginBtn");
     btn.disabled = true;
     btn.textContent = "登 录 中...";
 
-    setTimeout(() => {
-        window.location.href = "./devices.html";
-    }, 600);
+    try {
+        const result = await apiCall("/api/EaodLogin.php", {
+            action: "pre_login",
+            usrname: username,
+            password: password
+        });
+
+        // 成功: { Success: { token, usrname, email, authorty, userid } }
+        // 失败: { error: "..." }
+        // 2FA:  { step: "2fa", session_id, bot_link }
+        if (result && result.Success) {
+            const u = result.Success;
+            localStorage.setItem("ACCESS-TOKEN", u.token || "");
+            localStorage.setItem("CURRENT-USRNAME", u.usrname || username);
+            localStorage.setItem("CURRENT-EMAIL", u.email || "");
+            localStorage.setItem("CURRENT-AUTHORTY", u.authorty || "");
+            localStorage.setItem("CURRENT-USERID", u.userid || "");
+            window.location.href = "./devices.html";
+        } else if (result && result.error) {
+            showFieldError("usernameWrap");
+            showFieldError("passwordWrap");
+            showTip(String(result.error));
+            btn.disabled = false;
+            btn.textContent = "登 录";
+        } else if (result && result.step === "2fa") {
+            showTip("该账号需要二次验证，请在原系统完成");
+            btn.disabled = false;
+            btn.textContent = "登 录";
+        } else {
+            showFieldError("usernameWrap");
+            showFieldError("passwordWrap");
+            showTip("登录失败，请重试");
+            btn.disabled = false;
+            btn.textContent = "登 录";
+        }
+    } catch (err) {
+        showTip("网络错误：" + (err.message || err));
+        btn.disabled = false;
+        btn.textContent = "登 录";
+    }
 }
 
 function handlePwdKey(event) {

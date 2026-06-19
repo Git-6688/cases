@@ -761,10 +761,10 @@ body {
                 </div>
                 <div class="topbar-right">
                     <div class="user-info">
-                        <div class="user-avatar">管</div>
+                        <div class="user-avatar" id="userAvatar">管</div>
                         <div class="user-detail">
-                            <div class="user-name">admin</div>
-                            <div class="user-role">超级管理员</div>
+                            <div class="user-name" id="userName">admin</div>
+                            <div class="user-role" id="userRole">用户</div>
                         </div>
                     </div>
                     <button class="logout-btn" onclick="logout()">退出</button>
@@ -775,14 +775,7 @@ body {
                 <div class="page-header">
                     <h1 class="page-title">设备管理</h1>
                     <div class="page-actions">
-                        <button class="btn btn-primary" onclick="addDevice()">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            添加设备
-                        </button>
-                        <button class="btn" onclick="refreshList()">
+                        <button class="btn btn-primary" onclick="refreshList()">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="23 4 23 10 17 10"></polyline>
                                 <polyline points="1 20 1 14 7 14"></polyline>
@@ -958,38 +951,91 @@ body {
     <div class="toast" id="toast"></div>
 
     <script>
-const seedDevices = [
-    { code: "DEV-001", name: "监控终端-01", type: "终端", ip: "192.168.1.10", status: "online", loc: "机房A-3号柜", lastTime: "2025-01-15 14:32:11" },
-    { code: "DEV-002", name: "主服务器 Alpha", type: "服务器", ip: "192.168.1.20", status: "online", loc: "机房A-1号柜", lastTime: "2025-01-15 14:31:55" },
-    { code: "DEV-003", name: "核心路由器", type: "路由器", ip: "192.168.1.1", status: "online", loc: "机房A-核心", lastTime: "2025-01-15 14:32:02" },
-    { code: "DEV-004", name: "摄像头-前门", type: "摄像头", ip: "192.168.1.101", status: "online", loc: "大厅", lastTime: "2025-01-15 14:32:10" },
-    { code: "DEV-005", name: "摄像头-后门", type: "摄像头", ip: "192.168.1.102", status: "offline", loc: "后门", lastTime: "2025-01-15 12:10:03" },
-    { code: "DEV-006", name: "终端 办公区A", type: "终端", ip: "192.168.1.11", status: "online", loc: "办公区A", lastTime: "2025-01-15 14:30:44" },
-    { code: "DEV-007", name: "服务器 Beta", type: "服务器", ip: "192.168.1.21", status: "error", loc: "机房B-1号柜", lastTime: "2025-01-15 10:22:18" },
-    { code: "DEV-008", name: "终端 办公区B", type: "终端", ip: "192.168.1.12", status: "online", loc: "办公区B", lastTime: "2025-01-15 14:29:51" },
-    { code: "DEV-009", name: "交换机 SW-01", type: "路由器", ip: "192.168.1.2", status: "online", loc: "机房A-核心", lastTime: "2025-01-15 14:32:05" },
-    { code: "DEV-010", name: "摄像头-走廊", type: "摄像头", ip: "192.168.1.103", status: "online", loc: "二楼走廊", lastTime: "2025-01-15 14:32:08" },
-    { code: "DEV-011", name: "终端 会议室", type: "终端", ip: "192.168.1.13", status: "offline", loc: "三楼会议室", lastTime: "2025-01-15 09:05:17" },
-    { code: "DEV-012", name: "存储服务器", type: "服务器", ip: "192.168.1.22", status: "online", loc: "机房B-2号柜", lastTime: "2025-01-15 14:31:45" },
-    { code: "DEV-013", name: "摄像头-停车场", type: "摄像头", ip: "192.168.1.104", status: "error", loc: "停车场入口", lastTime: "2025-01-14 23:45:22" },
-    { code: "DEV-014", name: "终端 开发区", type: "终端", ip: "192.168.1.14", status: "online", loc: "开发部", lastTime: "2025-01-15 14:32:00" },
-    { code: "DEV-015", name: "网关路由器", type: "路由器", ip: "192.168.1.3", status: "online", loc: "机房A-核心", lastTime: "2025-01-15 14:32:03" },
-    { code: "DEV-016", name: "测试终端", type: "终端", ip: "192.168.1.15", status: "online", loc: "测试区", lastTime: "2025-01-15 14:20:10" },
-    { code: "DEV-017", name: "备份服务器", type: "服务器", ip: "192.168.1.23", status: "online", loc: "机房B-3号柜", lastTime: "2025-01-15 14:31:30" },
-    { code: "DEV-018", name: "摄像头-楼梯口", type: "摄像头", ip: "192.168.1.105", status: "online", loc: "一楼楼梯", lastTime: "2025-01-15 14:32:12" },
-    { code: "DEV-019", name: "终端 前台", type: "终端", ip: "192.168.1.16", status: "offline", loc: "前台", lastTime: "2025-01-15 08:00:00" },
-    { code: "DEV-020", name: "边缘计算节点", type: "服务器", ip: "192.168.1.24", status: "online", loc: "机房A-2号柜", lastTime: "2025-01-15 14:31:58" },
-];
+// ⚙️ API 基地址。部署后如果 API 部署在同一个域名，保持 "" 即可。
+// 如果 API 在别的域名，例如 https://1jiangjun.com，请改成对应域名。
+const API_BASE = "";
 
-let devices = JSON.parse(JSON.stringify(seedDevices));
+function apiCall(path, body) {
+    return fetch(API_BASE + path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    }).then(r => r.json());
+}
+
+function getToken() { return localStorage.getItem("ACCESS-TOKEN") || ""; }
+
+// 把 API 返回的设备数据统一成前端展示用的格式
+function normalizeDevice(raw, i) {
+    return {
+        id: raw.phone_id || raw.id || raw.device_id || raw._id || ("local-" + i),
+        code: raw.code || raw.phone_id || raw.device_code || raw.id || ("DEV-" + (i + 1)),
+        name: raw.phone_name || raw.name || raw.device_name || raw.title || "设备 " + (i + 1),
+        type: raw.type || raw.device_type || raw.category || "设备",
+        ip: raw.ip || raw.ip_address || raw.last_ip || "-",
+        status: (raw.status && ["online", "offline", "error"].includes(raw.status))
+            ? raw.status
+            : (raw.online ? "online" : (raw.active ? "online" : (raw.status === 0 ? "online" : "offline"))),
+        loc: raw.location || raw.loc || raw.address || "-",
+        lastTime: raw.last_time || raw.lastTime || raw.last_heartbeat || raw.updated_at || "-"
+    };
+}
+
+let devices = [];
 let currentPage = 1;
-let editingIndex = -1;
+let editingId = null;
 
 const statusMap = {
     online: { text: "在线", cls: "success" },
     offline: { text: "离线", cls: "default" },
     error: { text: "异常", cls: "danger" }
 };
+
+// 初始化：检查登录态，显示用户信息，加载设备
+function init() {
+    const token = getToken();
+    if (!token) {
+        window.location.href = "./index.html";
+        return;
+    }
+    const usr = localStorage.getItem("CURRENT-USRNAME") || "用户";
+    const authority = localStorage.getItem("CURRENT-AUTHORTY") || "";
+    document.getElementById("userName").textContent = usr;
+    document.getElementById("userRole").textContent = authority || "用户";
+    document.getElementById("userAvatar").textContent = usr.charAt(0);
+
+    loadDevices();
+}
+
+async function loadDevices() {
+    const tbody = document.getElementById("deviceTableBody");
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:60px 0;color:#86909c;">加载中...</td></tr>';
+
+    try {
+        const result = await apiCall("/api/EaodAllDevices.php", { token: getToken() });
+        let list = [];
+        if (result && result.Success) {
+            list = Array.isArray(result.Success) ? result.Success : [result.Success];
+        } else if (Array.isArray(result)) {
+            list = result;
+        } else if (result && result.data && Array.isArray(result.data)) {
+            list = result.data;
+        } else if (result && result.error) {
+            showToast("加载失败：" + result.error);
+            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:60px 0;color:#cf1322;">' +
+                String(result.error) + '</td></tr>';
+            return;
+        }
+
+        devices = list.map((d, i) => normalizeDevice(d, i));
+        renderStats();
+        renderTable();
+    } catch (err) {
+        showToast("网络错误：" + (err.message || err));
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:60px 0;color:#cf1322;">' +
+            '网络错误：' + (err.message || err) + '</td></tr>';
+    }
+}
 
 function getFiltered() {
     const kw = document.getElementById("searchInput").value.trim().toLowerCase();
@@ -1030,8 +1076,7 @@ function renderTable() {
     }
 
     tbody.innerHTML = pageItems.map((d, i) => {
-        const globalIdx = devices.indexOf(d);
-        const s = statusMap[d.status];
+        const s = statusMap[d.status] || statusMap.offline;
         return `<tr>
             <td><input type="checkbox" class="row-check"></td>
             <td>${start + i + 1}</td>
@@ -1044,9 +1089,8 @@ function renderTable() {
             <td style="color:#86909c;font-size:12px;">${d.lastTime}</td>
             <td>
                 <div class="row-actions">
-                    <button class="row-action" onclick="editDevice(${globalIdx})">编辑</button>
-                    <button class="row-action" onclick="toggleStatus(${globalIdx})">切换</button>
-                    <button class="row-action danger" onclick="deleteDevice(${globalIdx})">删除</button>
+                    <button class="row-action" onclick='editDevice(${JSON.stringify(d.id)})'>编辑</button>
+                    <button class="row-action danger" onclick='deleteDevice(${JSON.stringify(d.id)}, ${JSON.stringify(d.name)})'>删除</button>
                 </div>
             </td>
         </tr>`;
@@ -1065,89 +1109,85 @@ function toggleAll(cb) {
     document.querySelectorAll(".row-check").forEach(c => c.checked = cb.checked);
 }
 
-function addDevice() {
-    editingIndex = -1;
-    document.getElementById("modalTitle").textContent = "添加设备";
-    document.getElementById("deviceForm").reset();
-    document.getElementById("fCode").value = "DEV-" + String(devices.length + 1).padStart(3, "0");
+function editDevice(id) {
+    const d = devices.find(x => x.id == id);
+    if (!d) return;
+    editingId = id;
+    document.getElementById("modalTitle").textContent = "编辑设备名称";
+    // 简化的编辑表单：只改名称
+    document.getElementById("deviceForm").innerHTML = `
+        <div class="form-row">
+            <label>设备编号</label>
+            <input type="text" class="form-input" value="${d.code}" disabled style="background:#f2f3f5;">
+        </div>
+        <div class="form-row">
+            <label>设备名称 <span class="req">*</span></label>
+            <input type="text" class="form-input" id="fName" value="${d.name.replace(/"/g, '&quot;')}" required>
+        </div>
+    `;
     document.getElementById("deviceModal").style.display = "flex";
-}
-
-function editDevice(idx) {
-    editingIndex = idx;
-    const d = devices[idx];
-    document.getElementById("modalTitle").textContent = "编辑设备";
-    document.getElementById("fCode").value = d.code;
-    document.getElementById("fName").value = d.name;
-    document.getElementById("fType").value = d.type;
-    document.getElementById("fIp").value = d.ip;
-    document.getElementById("fLoc").value = d.loc;
-    document.getElementById("fStatus").value = d.status;
-    document.getElementById("deviceModal").style.display = "flex";
+    setTimeout(() => document.getElementById("fName").focus(), 100);
 }
 
 function closeModal() {
     document.getElementById("deviceModal").style.display = "none";
 }
 
-function saveDevice(event) {
+async function saveDevice(event) {
     event.preventDefault();
-    const data = {
-        code: document.getElementById("fCode").value.trim(),
-        name: document.getElementById("fName").value.trim(),
-        type: document.getElementById("fType").value,
-        ip: document.getElementById("fIp").value.trim() || "-",
-        loc: document.getElementById("fLoc").value.trim() || "-",
-        status: document.getElementById("fStatus").value,
-        lastTime: formatNow()
-    };
-    if (editingIndex >= 0) {
-        devices[editingIndex] = data;
-        showToast("设备已更新");
-    } else {
-        devices.unshift(data);
-        currentPage = 1;
-        showToast("设备已添加");
+    const newName = document.getElementById("fName").value.trim();
+    if (!newName || !editingId) return;
+
+    try {
+        const result = await apiCall("/api/UpdatePhoneName.php", {
+            token: getToken(),
+            phone_id: editingId,
+            phone_name: newName
+        });
+        if (result && result.Success !== undefined || (result && !result.error)) {
+            const d = devices.find(x => x.id == editingId);
+            if (d) d.name = newName;
+            closeModal();
+            renderTable();
+            showToast("设备名称已更新");
+        } else {
+            showToast("更新失败：" + (result?.error || "未知错误"));
+        }
+    } catch (err) {
+        showToast("网络错误：" + (err.message || err));
     }
-    closeModal();
-    renderStats();
-    renderTable();
 }
 
-function deleteDevice(idx) {
-    if (!confirm(`确定删除设备「${devices[idx].name}」吗？`)) return;
-    devices.splice(idx, 1);
-    renderStats();
-    renderTable();
-    showToast("删除成功");
-}
-
-function toggleStatus(idx) {
-    const order = ["online", "offline", "error"];
-    const cur = order.indexOf(devices[idx].status);
-    devices[idx].status = order[(cur + 1) % order.length];
-    devices[idx].lastTime = formatNow();
-    renderStats();
-    renderTable();
+async function deleteDevice(id, name) {
+    if (!confirm(`确定删除设备「${name}」吗？`)) return;
+    try {
+        const result = await apiCall("/api/DeletePhoneById.php", {
+            token: getToken(),
+            phone_id: id
+        });
+        if (result && (result.Success !== undefined || !result.error)) {
+            devices = devices.filter(x => x.id != id);
+            renderStats();
+            renderTable();
+            showToast("删除成功");
+        } else {
+            showToast("删除失败：" + (result?.error || "未知错误"));
+        }
+    } catch (err) {
+        showToast("网络错误：" + (err.message || err));
+    }
 }
 
 function refreshList() {
-    devices.forEach(d => d.lastTime = formatNow());
-    renderStats();
-    renderTable();
-    showToast("列表已刷新");
+    loadDevices();
+    showToast("重新加载中...");
 }
 
 function logout() {
-    if (confirm("确定退出登录？")) {
-        window.location.href = "./index.html";
-    }
-}
-
-function formatNow() {
-    const d = new Date();
-    const pad = n => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    if (!confirm("确定退出登录？")) return;
+    ["ACCESS-TOKEN", "CURRENT-USRNAME", "CURRENT-EMAIL", "CURRENT-AUTHORTY", "CURRENT-USERID"]
+        .forEach(k => localStorage.removeItem(k));
+    window.location.href = "./index.html";
 }
 
 let toastTimer = null;
@@ -1163,8 +1203,7 @@ document.getElementById("searchInput").addEventListener("input", () => { current
 document.getElementById("statusFilter").addEventListener("change", () => { currentPage = 1; renderTable(); });
 document.getElementById("typeFilter").addEventListener("change", () => { currentPage = 1; renderTable(); });
 
-renderStats();
-renderTable();
+init();
     </script>
 </body>
 </html>
