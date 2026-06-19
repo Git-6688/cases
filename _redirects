@@ -1,0 +1,8 @@
+# 根路径跳转到登录页（301 永久重定向，搜索引擎友好）
+/              /index.html       301
+
+# 兜底：所有未知路径返回 404 页面（如果以后创建 404.html）
+/*             /index.html       200
+
+# 如果你想让访问 devices 的 URL 更优雅（可选）
+/devices       /devices.html     301
