@@ -26,11 +26,13 @@
     position: absolute;
     inset: 0;
     background-image:
-        radial-gradient(ellipse at 30% 40%, rgba(180, 110, 10, 0.25) 0%, transparent 50%),
-        radial-gradient(ellipse at 70% 60%, rgba(80, 40, 0, 0.3) 0%, transparent 60%),
+        url("../images/bg.jpg"),
+        radial-gradient(ellipse at 30% 40%, rgba(180, 110, 10, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 60%, rgba(80, 40, 0, 0.35) 0%, transparent 60%),
         linear-gradient(135deg, #1a0d00 0%, #2d1800 50%, #1a0d00 100%);
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
 }
 
 .login-bg-image::before {

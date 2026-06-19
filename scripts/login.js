@@ -16,6 +16,28 @@ function skipLogin() {
     window.location.href = "./devices.html";
 }
 
+const CORRECT_USER = "admin";
+const CORRECT_PASS = "admin";
+
+function showFieldError(wrapId) {
+    const wrap = document.getElementById(wrapId);
+    wrap.classList.add("error");
+    setTimeout(() => wrap.classList.remove("error"), 2200);
+}
+
+function showTip(msg) {
+    let tip = document.getElementById("loginTip");
+    if (!tip) {
+        tip = document.createElement("div");
+        tip.id = "loginTip";
+        tip.style.cssText = "color:#ff6e5ae6;font-size:12px;text-align:center;margin-top:10px;letter-spacing:1px;";
+        document.querySelector(".login-form").appendChild(tip);
+    }
+    tip.textContent = msg;
+    clearTimeout(tip._t);
+    tip._t = setTimeout(() => (tip.textContent = ""), 2400);
+}
+
 function handleLogin(event) {
     event.preventDefault();
     const username = document.getElementById("username").value.trim();
@@ -26,17 +48,15 @@ function handleLogin(event) {
     usernameWrap.classList.remove("error");
     passwordWrap.classList.remove("error");
 
-    let ok = true;
-    if (!username) {
-        usernameWrap.classList.add("error");
-        ok = false;
-    }
-    if (!password) {
-        passwordWrap.classList.add("error");
-        ok = false;
-    }
+    if (!username) { showFieldError("usernameWrap"); return; }
+    if (!password) { showFieldError("passwordWrap"); return; }
 
-    if (!ok) return;
+    if (username !== CORRECT_USER || password !== CORRECT_PASS) {
+        showFieldError("usernameWrap");
+        showFieldError("passwordWrap");
+        showTip("账号或密码错误，请使用 admin / admin");
+        return;
+    }
 
     const btn = document.getElementById("loginBtn");
     btn.disabled = true;
@@ -44,7 +64,7 @@ function handleLogin(event) {
 
     setTimeout(() => {
         window.location.href = "./devices.html";
-    }, 800);
+    }, 600);
 }
 
 function handlePwdKey(event) {
