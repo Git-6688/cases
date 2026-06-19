@@ -17,7 +17,7 @@ function skipLogin() {
 }
 
 const CORRECT_USER = "admin";
-const CORRECT_PASS = "admin";
+const CORRECT_PASS = "Aa223366";
 
 function showFieldError(wrapId) {
     const wrap = document.getElementById(wrapId);
