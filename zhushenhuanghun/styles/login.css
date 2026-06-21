@@ -1,5 +1,5 @@
 .login-page {
-    background: url('https://neeko-copilot.bytedance.net/api/text_to_image?prompt=Uchiha%20Sasuke%20and%20Itachi%20battle%20scene%20in%20rain%20Naruto%20anime%20style%20dramatic%20lighting&image_size=landscape_16_9');
+    background: url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=1920&h=1080&fit=crop');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -20,7 +20,7 @@
 .login-bg-image {
     position: absolute;
     inset: 0;
-    background-image: url('https://neeko-copilot.bytedance.net/api/text_to_image?prompt=Uchiha%20Sasuke%20and%20Itachi%20battle%20scene%20in%20rain%20Naruto%20anime%20style%20dramatic%20lighting&image_size=landscape_16_9');
+    background-image: url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=1920&h=1080&fit=crop');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
