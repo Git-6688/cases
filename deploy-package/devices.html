@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>诸神黄昏 · 设备管理</title>
+    <style>
+      :root {
+        --primary: #4a90d9;
+        --primary-light: #7ab8f5;
+        --primary-dark: #2c6bb3;
+        --gold: #d97706;
+        --gold-light: #f59e0b;
+        --gold-dark: #b45309;
+        --bg-1: #f8fafc;
+        --bg-2: #e8f4fc;
+        --bg-panel: rgba(255, 255, 255, 0.9);
+        --bg-row: rgba(74, 144, 217, 0.04);
+        --text: #1e293b;
+        --text-dim: #64748b;
+        --text-muted: #94a3b8;
+        --border: rgba(74, 144, 217, 0.2);
+        --border-strong: rgba(74, 144, 217, 0.35);
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body { width: 100%; min-height: 100vh; }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%),
+          url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=1920&h=1080&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .layout { min-height: 100vh; display: flex; }
+
+      /* 侧边栏 */
+      .sidebar {
+        width: 220px;
+        background: rgba(255, 255, 255, 0.9);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+
+      .sidebar-logo {
+        padding: 24px 20px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar-logo-title {
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: 6px;
+        background: linear-gradient(180deg, #7ab8f5 0%, #4a90d9 60%, #2c6bb3 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .sidebar-logo-sub {
+        margin-top: 6px;
+        font-size: 10px;
+        color: var(--text-dim);
+        letter-spacing: 4px;
+      }
+
+      .sidebar-menu {
+        flex: 1;
+        padding: 16px 12px;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        margin-bottom: 4px;
+        border-radius: 2px;
+        color: var(--text-dim);
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.15s, color 0.15s;
+        user-select: none;
+      }
+
+      .menu-item:hover { background: rgba(74, 144, 217, 0.08); color: var(--primary-light); }
+      .menu-item.active {
+        background: rgba(74, 144, 217, 0.12);
+        color: var(--primary-light);
+        border-left: 2px solid var(--primary);
+        padding-left: 12px;
+      }
+
+      .menu-item .icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+
+      .sidebar-footer {
+        padding: 16px;
+        font-size: 11px;
+        color: var(--text-muted);
+        text-align: center;
+        border-top: 1px solid var(--border);
+        letter-spacing: 2px;
+      }
+
+      /* 主区域 */
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .topbar {
+        background: rgba(12, 8, 2, 0.6);
+        border-bottom: 1px solid var(--border);
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .breadcrumb {
+        color: var(--text-dim);
+        font-size: 13px;
+      }
+
+      .breadcrumb .sep { margin: 0 8px; color: var(--text-muted); }
+      .breadcrumb .current { color: var(--text); font-weight: 500; }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .user-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 2px;
+        background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+        color: #1a0d00;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+      }
+
+      .user-detail { text-align: right; }
+      .user-name { font-size: 13px; color: var(--text); }
+      .user-role { font-size: 11px; color: var(--text-dim); }
+
+      .logout-btn {
+        margin-left: 12px;
+        padding: 6px 14px;
+        font-size: 12px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        border-radius: 2px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+      }
+
+      .logout-btn:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+
+      /* 内容区 */
+      .content { padding: 20px 24px; flex: 1; }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .page-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--gold-light);
+        letter-spacing: 4px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        background: rgba(220, 160, 30, 0.1);
+        border: 1px solid var(--border-strong);
+        color: var(--gold-light);
+        border-radius: 2px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+      }
+
+      .btn:hover { background: rgba(220, 160, 30, 0.2); }
+      .btn:active { transform: translateY(1px); }
+
+      /* 统计卡片 */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .stat-card {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 2px;
+        background: rgba(220, 160, 30, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: var(--gold);
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--text-dim);
+        letter-spacing: 2px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--gold-light);
+        margin-top: 4px;
+      }
+
+      /* 过滤栏 */
+      .filter-bar {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        padding: 14px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .filter-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+      .filter-input, .filter-select {
+        padding: 7px 12px;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        color: var(--text);
+        font-family: inherit;
+        outline: none;
+        min-width: 180px;
+      }
+
+      .filter-select { min-width: 120px; cursor: pointer; }
+
+      .filter-input:focus, .filter-select:focus { border-color: var(--gold); }
+
+      .filter-count {
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+
+      .filter-count b { color: var(--gold-light); font-weight: 700; }
+
+      /* 表格 */
+      .table-wrap {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        overflow-x: auto;
+      }
+
+      .device-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      .device-table thead {
+        background: rgba(220, 160, 30, 0.08);
+      }
+
+      .device-table th {
+        padding: 12px 14px;
+        text-align: left;
+        color: var(--gold-light);
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 2px;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+
+      .device-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(220, 160, 30, 0.08);
+        color: var(--text);
+      }
+
+      .device-table tbody tr:hover {
+        background: rgba(220, 160, 30, 0.05);
+      }
+
+      .device-table tbody tr:last-child td { border-bottom: none; }
+
+      .code {
+        font-family: Consolas, monospace;
+        color: var(--text-dim);
+        font-size: 12px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        font-size: 11px;
+        border-radius: 2px;
+        border: 1px solid var(--border);
+        letter-spacing: 1px;
+      }
+
+      .badge-online {
+        background: rgba(76, 175, 80, 0.15);
+        border-color: rgba(76, 175, 80, 0.35);
+        color: #8bc88d;
+      }
+
+      .badge-offline {
+        background: rgba(158, 158, 158, 0.1);
+        border-color: rgba(158, 158, 158, 0.3);
+        color: #a89878;
+      }
+
+      .badge-error {
+        background: rgba(239, 68, 68, 0.12);
+        border-color: rgba(239, 68, 68, 0.35);
+        color: #f08080;
+      }
+
+      .badge-type {
+        background: rgba(220, 160, 30, 0.08);
+        border-color: rgba(220, 160, 30, 0.2);
+        color: var(--text-dim);
+      }
+
+      .row-actions { display: flex; gap: 6px; }
+
+      .row-btn {
+        padding: 4px 10px;
+        font-size: 12px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        border-radius: 2px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+      }
+
+      .row-btn:hover {
+        border-color: var(--gold);
+        color: var(--gold-light);
+      }
+
+      .row-btn.danger:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+
+      .status-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+
+      .status-dot.online { background: var(--success); box-shadow: 0 0 4px var(--success); }
+      .status-dot.offline { background: #888; }
+      .status-dot.error { background: var(--danger); box-shadow: 0 0 4px var(--danger); }
+
+      /* 分页 */
+      .pagination {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px;
+        font-size: 12px;
+        color: var(--text-dim);
+        border-top: 1px solid var(--border);
+      }
+
+      .page-btn {
+        padding: 5px 12px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        border-radius: 2px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12px;
+        transition: all 0.15s;
+      }
+
+      .page-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold-light); }
+      .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+      /* 状态行 */
+      .state-row {
+        padding: 10px 16px;
+        font-size: 12px;
+        color: var(--text-dim);
+        text-align: center;
+        border-top: 1px solid var(--border);
+        background: rgba(220, 160, 30, 0.03);
+      }
+
+      .state-row.error { color: var(--danger); }
+      .state-row.loading { color: var(--gold-light); }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        background: var(--bg-panel);
+        border: 1px solid var(--border-strong);
+        padding: 10px 20px;
+        border-radius: 2px;
+        font-size: 13px;
+        color: var(--gold-light);
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .toast.error {
+        color: var(--danger);
+        border-color: rgba(239, 68, 68, 0.4);
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1500;
+      }
+
+      .modal.show { display: flex; }
+
+      .modal-dialog {
+        background: var(--bg-panel);
+        border: 1px solid var(--border-strong);
+        border-radius: 2px;
+        width: 420px;
+        max-width: calc(100% - 32px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+
+      .modal-header {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gold-light);
+        letter-spacing: 4px;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        font-size: 20px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+      }
+
+      .modal-close:hover { color: var(--text); }
+
+      .modal-body { padding: 20px 18px; }
+
+      .modal-footer {
+        padding: 12px 18px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .form-row { margin-bottom: 14px; }
+
+      .form-row:last-child { margin-bottom: 0; }
+
+      .form-row label {
+        display: block;
+        font-size: 12px;
+        color: var(--text-dim);
+        margin-bottom: 6px;
+        letter-spacing: 2px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        color: var(--text);
+        font-family: inherit;
+        outline: none;
+      }
+
+      .form-input:focus { border-color: var(--gold); }
+
+      .form-static {
+        padding: 8px 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        font-size: 12px;
+        color: var(--text-dim);
+        font-family: Consolas, monospace;
+      }
+
+      /* 响应式 */
+      @media (max-width: 900px) {
+        .sidebar { display: none; }
+        .stats { grid-template-columns: repeat(2, 1fr); }
+        .filter-input { min-width: 140px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- 侧边栏 -->
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-title">诸神黄昏</div>
+          <div class="sidebar-logo-sub">设 备 管 理</div>
+        </div>
+        <nav class="sidebar-menu">
+          <div class="menu-item" onclick="location.href='./dashboard.html'">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>仪表盘</span>
+          </div>
+          <div class="menu-item active">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span>设备管理</span>
+          </div>
+          <div class="menu-item" onclick="location.href='./overseas-devices.html'">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>海外设备</span>
+          </div>
+          <div class="menu-item" onclick="location.href='./proxy-management.html'">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+            <span>代理管理</span>
+          </div>
+          <div class="menu-item" onclick="location.href='./apps-list.html'">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>应用列表</span>
+          </div>
+          <div class="menu-item" onclick="location.href='./app-build.html'">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span>应用构建</span>
+          </div>
+        </nav>
+        <div class="sidebar-footer">© 诸神黄昏</div>
+      </aside>
+
+      <!-- 主区域 -->
+      <div class="main">
+        <!-- 顶栏 -->
+        <header class="topbar">
+          <div class="breadcrumb">
+            <span>首页</span>
+            <span class="sep">/</span>
+            <span class="current">设备管理</span>
+          </div>
+          <div class="user-info">
+            <div class="user-detail">
+              <div class="user-name" id="userName">用户</div>
+              <div class="user-role" id="userRole"></div>
+            </div>
+            <div class="user-avatar" id="userAvatar">U</div>
+            <button class="logout-btn" onclick="logout()">退出</button>
+          </div>
+        </header>
+
+        <!-- 内容 -->
+        <div class="content">
+          <div class="page-header">
+            <div class="page-title">设 备 列 表</div>
+            <button class="btn" onclick="loadDevices()">刷 新</button>
+          </div>
+
+          <!-- 统计 -->
+          <div class="stats">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              </div>
+              <div>
+                <div class="stat-label">总 数</div>
+                <div class="stat-value" id="stTotal">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="color:#8bc88d; background: rgba(76,175,80,0.1);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              </div>
+              <div>
+                <div class="stat-label">在 线</div>
+                <div class="stat-value" id="stOnline" style="color:#8bc88d;">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="color:#a89878;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="6" x2="12" y2="18"></line></svg>
+              </div>
+              <div>
+                <div class="stat-label">离 线</div>
+                <div class="stat-value" id="stOffline" style="color:#a89878;">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="color:#f08080; background: rgba(239,68,68,0.1);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line></svg>
+              </div>
+              <div>
+                <div class="stat-label">异 常</div>
+                <div class="stat-value" id="stError" style="color:#f08080;">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 过滤 -->
+          <div class="filter-bar">
+            <div class="filter-group">
+              <input type="text" class="filter-input" id="searchInput" placeholder="搜索设备名称 / 编号 / IP" oninput="renderTable()" />
+              <select class="filter-select" id="statusFilter" onchange="renderTable()">
+                <option value="">全部状态</option>
+                <option value="online">在线</option>
+                <option value="offline">离线</option>
+                <option value="error">异常</option>
+              </select>
+            </div>
+            <div class="filter-count">共 <b id="totalCount">0</b> 台设备</div>
+          </div>
+
+          <!-- 表格 -->
+          <div class="table-wrap">
+            <table class="device-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>设备编号</th>
+                  <th>设备名称</th>
+                  <th>类型</th>
+                  <th>IP 地址</th>
+                  <th>状态</th>
+                  <th>位置</th>
+                  <th>最后心跳</th>
+                  <th style="text-align:right;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="deviceTableBody"></tbody>
+            </table>
+
+            <!-- 状态行 -->
+            <div class="state-row" id="stateRow"></div>
+
+            <!-- 分页 -->
+            <div class="pagination">
+              <button class="page-btn" id="prevBtn" onclick="changePage(-1)">上一页</button>
+              <span>第 <b id="currentPage">1</b> / <span id="totalPages">1</span> 页</span>
+              <button class="page-btn" id="nextBtn" onclick="changePage(1)">下一页</button>
+              <select class="filter-select" id="pageSize" onchange="changePage(0)" style="min-width:90px;">
+                <option value="10">10 条</option>
+                <option value="20" selected>20 条</option>
+                <option value="50">50 条</option>
+                <option value="9999">全部</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编辑设备 Modal -->
+    <div class="modal" id="editModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <span class="modal-title">编 辑 设 备</span>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label>设备编号</label>
+            <div class="form-static" id="editCode">-</div>
+          </div>
+          <div class="form-row">
+            <label>设备名称 <span style="color:var(--danger);">*</span></label>
+            <input type="text" class="form-input" id="editName" placeholder="请输入设备名称" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" onclick="closeModal()">取消</button>
+          <button class="btn" style="background:rgba(220,160,30,0.25);" onclick="confirmEdit()">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 删除确认 Modal -->
+    <div class="modal" id="delModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <span class="modal-title">删 除 设 备</span>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:13px; line-height:1.8; color:var(--text-dim);">
+            确认要删除设备 <span style="color:var(--gold-light); font-weight:600;" id="delName">-</span> 吗？
+            <br /><span style="color:var(--danger);">此操作不可撤销。</span>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" onclick="closeModal()">取消</button>
+          <button class="btn" style="background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.4); color:var(--danger);" onclick="confirmDelete()">确认删除</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // ⚙️ API 基地址。如果页面与 API 在同一个域名下，保持 "" 即可。
+      // 如果页面在别的域名，请改成 API 所在域名，例如：const API_BASE = "https://1jiangjun.com";
+      const API_BASE = "";
+
+      function apiCall(path, body) {
+        return fetch(API_BASE + path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }).then(function (r) { return r.json(); });
+      }
+
+      function getToken() { return localStorage.getItem("ACCESS-TOKEN") || ""; }
+
+      // ---------- 数据 ----------
+      var devices = [];
+      var currentPage = 1;
+      var editingId = null;
+      var deletingId = null;
+
+      // ---------- 初始化 ----------
+      function init() {
+        var token = getToken();
+        if (!token) {
+          window.location.href = "./index.html";
+          return;
+        }
+        var usr = localStorage.getItem("CURRENT-USRNAME") || "用户";
+        var role = localStorage.getItem("CURRENT-AUTHORTY") || "";
+        document.getElementById("userName").textContent = usr;
+        document.getElementById("userRole").textContent = role;
+        document.getElementById("userAvatar").textContent = usr.charAt(0).toUpperCase();
+        loadDevices();
+      }
+
+      // ---------- 加载设备 ----------
+      function loadDevices() {
+        var state = document.getElementById("stateRow");
+        state.className = "state-row loading";
+        state.textContent = "正在加载设备列表...";
+
+        apiCall("/api/EaodAllDevices.php", { token: getToken() }).then(function (result) {
+          var list = [];
+          if (result && result.Success) {
+            list = Array.isArray(result.Success) ? result.Success : [result.Success];
+          } else if (Array.isArray(result)) {
+            list = result;
+          } else if (result && result.data && Array.isArray(result.data)) {
+            list = result.data;
+          } else if (result && result.error) {
+            state.className = "state-row error";
+            state.textContent = "加载失败：" + result.error;
+            devices = [];
+            renderStats();
+            renderTable();
+            showToast("加载失败：" + result.error, true);
+            return;
+          }
+
+          devices = list.map(function (d, i) { return normalizeDevice(d, i); });
+          state.textContent = "已加载 " + devices.length + " 台设备 · 更新于 " + new Date().toLocaleTimeString();
+          state.className = "state-row";
+          renderStats();
+          renderTable();
+        }).catch(function (err) {
+          devices = [];
+          state.className = "state-row error";
+          state.textContent = "网络错误：" + (err.message || err);
+          renderStats();
+          renderTable();
+          showToast("网络错误：" + (err.message || err), true);
+        });
+      }
+
+      // ---------- 数据规范化 ----------
+      function normalizeDevice(d, i) {
+        if (!d) d = {};
+        // 尝试从各种字段提取信息
+        var status = "offline";
+        if (d.status === "online" || d.online === true || d.active === true || d.status === 0 || d.status === "0") status = "online";
+        if (d.status === "error" || d.error === true || d.fault === true) status = "error";
+        if (d.status === "offline" || d.online === false) status = "offline";
+
+        var type = d.type || d.device_type || d.category || d.kind || "-";
+        if (typeof type !== "string") type = "设备";
+
+        return {
+          id: String(d.phone_id != null ? d.phone_id : (d.id != null ? d.id : (d.device_id != null ? d.device_id : "local-" + i))),
+          code: String(d.code || d.phone_id || d.device_code || d.id || ("DEV-" + (i + 1))),
+          name: d.phone_name || d.name || d.device_name || d.title || ("设备 " + (i + 1)),
+          type: type,
+          ip: d.ip || d.ip_address || d.last_ip || "-",
+          status: status,
+          loc: d.location || d.loc || d.address || d.position || "-",
+          lastTime: d.last_time || d.lastTime || d.last_heartbeat || d.updated_at || d.created_at || "-"
+        };
+      }
+
+      // ---------- 统计 ----------
+      function renderStats() {
+        document.getElementById("stTotal").textContent = devices.length;
+        document.getElementById("stOnline").textContent = devices.filter(function (d) { return d.status === "online"; }).length;
+        document.getElementById("stOffline").textContent = devices.filter(function (d) { return d.status === "offline"; }).length;
+        document.getElementById("stError").textContent = devices.filter(function (d) { return d.status === "error"; }).length;
+      }
+
+      // ---------- 过滤 + 表格 ----------
+      function getFiltered() {
+        var kw = document.getElementById("searchInput").value.trim().toLowerCase();
+        var status = document.getElementById("statusFilter").value;
+        return devices.filter(function (d) {
+          var matchKw = !kw ||
+            String(d.name).toLowerCase().indexOf(kw) !== -1 ||
+            String(d.code).toLowerCase().indexOf(kw) !== -1 ||
+            String(d.ip).toLowerCase().indexOf(kw) !== -1;
+          var matchStatus = !status || d.status === status;
+          return matchKw && matchStatus;
+        });
+      }
+
+      function renderTable() {
+        var list = getFiltered();
+        var pageSize = parseInt(document.getElementById("pageSize").value, 10);
+        var totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        document.getElementById("totalCount").textContent = list.length;
+        document.getElementById("currentPage").textContent = currentPage;
+        document.getElementById("totalPages").textContent = totalPages;
+
+        var tbody = document.getElementById("deviceTableBody");
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:50px 0; color:var(--text-muted); font-size:12px;">暂无设备数据</td></tr>';
+          document.getElementById("prevBtn").disabled = true;
+          document.getElementById("nextBtn").disabled = true;
+          return;
+        }
+
+        var start = (currentPage - 1) * pageSize;
+        var pageItems = list.slice(start, start + pageSize);
+
+        tbody.innerHTML = pageItems.map(function (d, i) {
+          var sText = d.status === "online" ? "在线" : (d.status === "error" ? "异常" : "离线");
+          var sCls = "badge-" + d.status;
+          var idAttr = d.id.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+          return '<tr>' +
+            '<td style="color:var(--text-muted); font-size:12px;">' + (start + i + 1) + '</td>' +
+            '<td class="code">' + escapeHtml(d.code) + '</td>' +
+            '<td><b>' + escapeHtml(d.name) + '</b></td>' +
+            '<td><span class="badge badge-type">' + escapeHtml(d.type) + '</span></td>' +
+            '<td class="code">' + escapeHtml(d.ip) + '</td>' +
+            '<td><span class="status-dot ' + d.status + '"></span><span class="badge ' + sCls + '">' + sText + '</span></td>' +
+            '<td style="color:var(--text-dim); font-size:12px;">' + escapeHtml(d.loc) + '</td>' +
+            '<td style="color:var(--text-muted); font-size:12px;">' + escapeHtml(String(d.lastTime)) + '</td>' +
+            '<td style="text-align:right;">' +
+              '<div class="row-actions" style="justify-content:flex-end;">' +
+                '<button class="row-btn" onclick="openEdit(' + safeQuote(d.id) + ')">编辑</button>' +
+                '<button class="row-btn danger" onclick="openDelete(' + safeQuote(d.id) + ', ' + safeQuote(d.name) + ')">删除</button>' +
+              '</div>' +
+            '</td>' +
+          '</tr>';
+        }).join("");
+
+        document.getElementById("prevBtn").disabled = currentPage <= 1;
+        document.getElementById("nextBtn").disabled = currentPage >= totalPages;
+      }
+
+      function escapeHtml(s) {
+        if (s == null) return "";
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+
+      function safeQuote(s) {
+        if (s == null) return "''";
+        return "'" + String(s).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'";
+      }
+
+      function changePage(delta) {
+        if (delta !== 0) currentPage += delta;
+        renderTable();
+      }
+
+      // ---------- 编辑 ----------
+      function openEdit(id) {
+        var d = devices.find(function (x) { return x.id === String(id); });
+        if (!d) return;
+        editingId = String(id);
+        document.getElementById("editCode").textContent = d.code;
+        document.getElementById("editName").value = d.name;
+        document.getElementById("editModal").classList.add("show");
+        setTimeout(function () {
+          var input = document.getElementById("editName");
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+        }, 50);
+      }
+
+      function confirmEdit() {
+        var newName = document.getElementById("editName").value.trim();
+        if (!newName) { showToast("请输入设备名称", true); return; }
+
+        showToast("正在保存...");
+        apiCall("/api/UpdatePhoneName.php", {
+          token: getToken(),
+          phone_id: editingId,
+          phone_name: newName
+        }).then(function (result) {
+          var ok = (result && result.Success !== undefined) ||
+                   (result && !result.error) ||
+                   (result === true);
+          if (ok) {
+            var d = devices.find(function (x) { return x.id === editingId; });
+            if (d) d.name = newName;
+            closeModal();
+            renderTable();
+            showToast("已更新");
+          } else {
+            showToast("保存失败：" + (result && result.error ? result.error : "未知错误"), true);
+          }
+        }).catch(function (err) {
+          showToast("网络错误：" + (err.message || err), true);
+        });
+      }
+
+      // ---------- 删除 ----------
+      function openDelete(id, name) {
+        deletingId = String(id);
+        document.getElementById("delName").textContent = name || "-";
+        document.getElementById("delModal").classList.add("show");
+      }
+
+      function confirmDelete() {
+        showToast("正在删除...");
+        apiCall("/api/DeletePhoneById.php", {
+          token: getToken(),
+          phone_id: deletingId
+        }).then(function (result) {
+          var ok = (result && result.Success !== undefined) ||
+                   (result && !result.error) ||
+                   (result === true);
+          if (ok) {
+            devices = devices.filter(function (x) { return x.id !== deletingId; });
+            closeModal();
+            renderStats();
+            renderTable();
+            showToast("已删除");
+          } else {
+            showToast("删除失败：" + (result && result.error ? result.error : "未知错误"), true);
+          }
+        }).catch(function (err) {
+          showToast("网络错误：" + (err.message || err), true);
+        });
+      }
+
+      function closeModal() {
+        document.getElementById("editModal").classList.remove("show");
+        document.getElementById("delModal").classList.remove("show");
+        editingId = null;
+        deletingId = null;
+      }
+
+      // ---------- 登出 ----------
+      function logout() {
+        ["ACCESS-TOKEN", "CURRENT-USRNAME", "CURRENT-EMAIL", "CURRENT-AUTHORTY", "CURRENT-USERID", "CURRENT-USER"].forEach(function (k) {
+          try { localStorage.removeItem(k); } catch (e) {}
+        });
+        window.location.href = "./index.html";
+      }
+
+      // ---------- Toast ----------
+      var toastTimer = null;
+      function showToast(text, isError) {
+        var el = document.getElementById("toast");
+        el.textContent = text;
+        if (isError) el.classList.add("error"); else el.classList.remove("error");
+        el.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2200);
+      }
+
+      // ---------- 启动 ----------
+      init();
+
+      // 点击遮罩关闭 Modal
+      document.getElementById("editModal").addEventListener("click", function (e) {
+        if (e.target === this) closeModal();
+      });
+      document.getElementById("delModal").addEventListener("click", function (e) {
+        if (e.target === this) closeModal();
+      });
+
+      // ESC 关闭 Modal
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeModal();
+        // Ctrl/Cmd + S 在编辑弹窗里保存
+        if ((e.ctrlKey || e.metaKey) && e.key === "s" && editingId) {
+          e.preventDefault();
+          confirmEdit();
+        }
+      });
+    </script>
+  </body>
+</html>

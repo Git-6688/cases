@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 — 诸神黄昏</title>
+    <link rel="stylesheet" href="./styles/common.css">
+    <link rel="stylesheet" href="./styles/login.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-bg">
+            <div class="login-bg-image"></div>
+            <div class="login-bg-overlay"></div>
+        </div>
+
+        <button class="skip-btn" onclick="skipLogin()">跳过 ›</button>
+
+        <div class="login-wrap card-enter">
+            <div class="login-logo-wrap">
+                <svg class="login-logo-img" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#2c6bb3" stop-opacity="0.6"/>
+                            <stop offset="50%" stop-color="#4a90d9" stop-opacity="1"/>
+                            <stop offset="100%" stop-color="#2c6bb3" stop-opacity="0.6"/>
+                        </linearGradient>
+                        <linearGradient id="textGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#7ab8f5"/>
+                            <stop offset="50%" stop-color="#4a90d9"/>
+                            <stop offset="100%" stop-color="#2c6bb3"/>
+                        </linearGradient>
+                    </defs>
+                    <text x="150" y="55" text-anchor="middle" font-family="serif" font-size="48" font-weight="900"
+                          fill="url(#textGrad)" letter-spacing="8"
+                          style="text-shadow: 0 4px 20px rgba(37, 99, 235, 0.2), 0 4px 12px rgba(37, 99, 235, 0.1);">诸 神 黄 昏</text>
+                    <line x1="30" y1="70" x2="270" y2="70" stroke="url(#goldGrad)" stroke-width="1"/>
+                </svg>
+            </div>
+
+            <div class="login-panel">
+                <div class="panel-header">
+                    <div class="panel-title-row">
+                        <div class="panel-title-line"></div>
+                        <div class="panel-title-text">账 号 登 录</div>
+                        <div class="panel-title-line"></div>
+                    </div>
+                </div>
+
+                <form class="login-form" onsubmit="handleLogin(event)">
+                    <div class="field-wrap">
+                        <div class="field-input-wrap" id="usernameWrap">
+                            <div class="field-prefix-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <input type="text" class="custom-input" id="username" name="username" placeholder="请输入用户名"
+                                   onfocus="wrapFocus('usernameWrap', true)" onblur="wrapFocus('usernameWrap', false)">
+                        </div>
+                    </div>
+
+                    <div class="field-wrap">
+                        <div class="field-input-wrap" id="passwordWrap">
+                            <div class="field-prefix-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </div>
+                            <input type="password" class="custom-input" id="password" name="password" placeholder="请输入密码"
+                                   onfocus="wrapFocus('passwordWrap', true)" onblur="wrapFocus('passwordWrap', false)"
+                                   onkeydown="handlePwdKey(event)">
+                            <div class="field-suffix-icon" onclick="togglePassword()" style="cursor:pointer;color:#c896328c;padding-right:12px;">
+                                <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="fire-btn" id="loginBtn">登 录</button>
+                </form>
+
+                <div class="panel-footer">
+                    <span>© 诸神黄昏 · 设备管理系统</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./scripts/login.js"></script>
+</body>
+</html>

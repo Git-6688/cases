@@ -1,0 +1,7 @@
+# 优雅 URL（必须放在通配规则前面，否则会被 /* 吞掉）
+/devices       /devices.html     301
+/dashboard     /dashboard.html   301
+/apps          /apps-list.html   301
+
+# 所有未知路径 → 登录页（200，由前端处理）
+/*             /index.html       200

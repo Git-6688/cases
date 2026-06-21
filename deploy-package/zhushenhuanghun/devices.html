@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备管理 — 诸神黄昏</title>
+    <link rel="stylesheet" href="./styles/common.css">
+    <link rel="stylesheet" href="./styles/devices.css">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 120 36" xmlns="http://www.w3.org/2000/svg" style="width:120px;height:auto;">
+                    <defs>
+                        <linearGradient id="sideGold" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#7ab8f5"/>
+                            <stop offset="50%" stop-color="#4a90d9"/>
+                            <stop offset="100%" stop-color="#2c6bb3"/>
+                        </linearGradient>
+                    </defs>
+                    <text x="60" y="24" text-anchor="middle" font-family="serif" font-size="20" font-weight="900"
+                          fill="url(#sideGold)" letter-spacing="4">诸 神 黄 昏</text>
+                </svg>
+            </div>
+            <nav class="menu">
+                <div class="menu-group">管理</div>
+                <a class="menu-item active" href="./devices.html">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    <span>设备管理</span>
+                </a>
+                <a class="menu-item" href="#">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>用户管理</span>
+                </a>
+                <a class="menu-item" href="#">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    <span>系统设置</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <span>不死鸟 · v1.0.0</span>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="breadcrumb">
+                    <span>首页</span>
+                    <span class="sep">/</span>
+                    <span class="current">设备管理</span>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar">管</div>
+                        <div class="user-detail">
+                            <div class="user-name">admin</div>
+                            <div class="user-role">超级管理员</div>
+                        </div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">退出</button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title">设备管理</h1>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" onclick="addDevice()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            添加设备
+                        </button>
+                        <button class="btn" onclick="refreshList()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            刷新
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#e6f4ff;color:#1677ff;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">设备总数</div>
+                            <div class="stat-value" id="stTotal">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#f6ffed;color:#389e0d;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">在线设备</div>
+                            <div class="stat-value" style="color:#389e0d;" id="stOnline">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fffbe6;color:#d48806;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">离线设备</div>
+                            <div class="stat-value" style="color:#86909c;" id="stOffline">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fff1f0;color:#cf1322;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">异常设备</div>
+                            <div class="stat-value" style="color:#cf1322;" id="stError">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="filter-bar">
+                        <div class="filter-group">
+                            <input type="text" class="filter-input" id="searchInput" placeholder="搜索设备名称 / 编号 / IP">
+                            <select class="filter-select" id="statusFilter">
+                                <option value="">全部状态</option>
+                                <option value="online">在线</option>
+                                <option value="offline">离线</option>
+                                <option value="error">异常</option>
+                            </select>
+                            <select class="filter-select" id="typeFilter">
+                                <option value="">全部类型</option>
+                                <option value="终端">终端</option>
+                                <option value="服务器">服务器</option>
+                                <option value="路由器">路由器</option>
+                                <option value="摄像头">摄像头</option>
+                            </select>
+                        </div>
+                        <div class="filter-count">共 <span id="totalCount">0</span> 台设备</div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="device-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:60px;">
+                                        <input type="checkbox" id="checkAll" onchange="toggleAll(this)">
+                                    </th>
+                                    <th style="width:60px;">#</th>
+                                    <th>设备编号</th>
+                                    <th>设备名称</th>
+                                    <th>类型</th>
+                                    <th>IP 地址</th>
+                                    <th>状态</th>
+                                    <th>位置</th>
+                                    <th>最后心跳</th>
+                                    <th style="width:160px;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deviceTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination">
+                        <button class="page-btn" onclick="changePage(-1)">上一页</button>
+                        <span class="page-info">第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 页</span>
+                        <button class="page-btn" onclick="changePage(1)">下一页</button>
+                        <select class="page-size" id="pageSize" onchange="renderTable()">
+                            <option value="10">10 条/页</option>
+                            <option value="20" selected>20 条/页</option>
+                            <option value="50">50 条/页</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="deviceModal" style="display:none;">
+        <div class="modal-mask" onclick="closeModal()"></div>
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <span id="modalTitle">添加设备</span>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="deviceForm" onsubmit="saveDevice(event)">
+                    <div class="form-row">
+                        <label>设备编号 <span class="req">*</span></label>
+                        <input type="text" class="form-input" id="fCode" placeholder="如 DEV-001" required>
+                    </div>
+                    <div class="form-row">
+                        <label>设备名称 <span class="req">*</span></label>
+                        <input type="text" class="form-input" id="fName" placeholder="请输入设备名称" required>
+                    </div>
+                    <div class="form-row">
+                        <label>类型</label>
+                        <select class="form-input" id="fType">
+                            <option value="终端">终端</option>
+                            <option value="服务器">服务器</option>
+                            <option value="路由器">路由器</option>
+                            <option value="摄像头">摄像头</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>IP 地址</label>
+                        <input type="text" class="form-input" id="fIp" placeholder="192.168.1.1">
+                    </div>
+                    <div class="form-row">
+                        <label>位置</label>
+                        <input type="text" class="form-input" id="fLoc" placeholder="如 机房A-3号柜">
+                    </div>
+                    <div class="form-row">
+                        <label>状态</label>
+                        <select class="form-input" id="fStatus">
+                            <option value="online">在线</option>
+                            <option value="offline">离线</option>
+                            <option value="error">异常</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="document.getElementById('deviceForm').requestSubmit()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="./scripts/devices.js"></script>
+</body>
+</html>
