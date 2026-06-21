@@ -1,0 +1,49 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - 18488292860-coder-patch-1
+      - main
+      - trae/solo-agent-xETity
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Verify project files exist
+        run: |
+          ls -la
+          test -f index.html && echo "index.html OK"
+          test -f _headers && echo "_headers OK"
+          test -f _redirects && echo "_redirects OK"
+
+      - name: Install Wrangler
+        run: npm install -g wrangler@latest
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          PROJECT_NAME="${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}"
+          if [ -z "$PROJECT_NAME" ]; then
+            PROJECT_NAME="device-management-system"
+          fi
+          wrangler pages deploy . \
+            --project-name="$PROJECT_NAME" \
+            --branch="${GITHUB_REF##*/}"
