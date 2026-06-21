@@ -1,285 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>诸神黄昏</title>
-    <style>
-      :root {
-        --gold: #dca01e;
-        --gold-light: #e6b83a;
-        --gold-dark: #8b5a00;
-        --bg-1: #0a0604;
-        --bg-2: #1a0d00;
-        --text: #f2e6c8;
-        --text-dim: #a89462;
-        --danger: #ff6e5a;
-      }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LinguaVerse · 多语种学习平台</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="nav-top">
+  <div class="nav-inner">
+    <a class="logo" href="#/">
+      <span class="logo-mark">LV</span>
+      <span class="logo-text">LinguaVerse</span>
+    </a>
+    <nav class="nav-links" id="navLinks"></nav>
+    <div class="nav-user" id="navUser"></div>
+  </div>
+</header>
 
-      * { box-sizing: border-box; margin: 0; padding: 0; }
+<main id="app"></main>
 
-      html, body { width: 100%; min-height: 100vh; }
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>© 2026 LinguaVerse · 沉浸式多语种学习平台</div>
+    <div class="footer-tags">English · 日本語 · 한국어</div>
+  </div>
+</footer>
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-        background:
-          radial-gradient(ellipse at 30% 30%, rgba(220, 160, 30, 0.12) 0%, transparent 55%),
-          radial-gradient(ellipse at 70% 70%, rgba(180, 90, 0, 0.1) 0%, transparent 60%),
-          linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
-        color: var(--text);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
+<div id="toast" class="toast"></div>
 
-      .login-wrap {
-        width: 100%;
-        max-width: 420px;
-        text-align: center;
-      }
-
-      .brand {
-        margin-bottom: 40px;
-      }
-
-      .brand-title {
-        font-size: 38px;
-        font-weight: 900;
-        letter-spacing: 12px;
-        background: linear-gradient(180deg, #ffd88c 0%, #dca01e 50%, #8b5a00 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        text-shadow: 0 0 30px rgba(220, 160, 30, 0.3);
-        padding-left: 12px;
-      }
-
-      .brand-sub {
-        margin-top: 8px;
-        font-size: 12px;
-        color: var(--text-dim);
-        letter-spacing: 4px;
-      }
-
-      .brand-divider {
-        width: 80px;
-        height: 1px;
-        margin: 24px auto 0;
-        background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      }
-
-      .card {
-        background: rgba(12, 8, 2, 0.6);
-        border: 1px solid rgba(220, 160, 30, 0.25);
-        border-radius: 2px;
-        padding: 32px 28px;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      }
-
-      .card-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--gold-light);
-        letter-spacing: 6px;
-        margin-bottom: 28px;
-      }
-
-      .field {
-        margin-bottom: 16px;
-        text-align: left;
-      }
-
-      .field-label {
-        display: block;
-        font-size: 12px;
-        color: var(--text-dim);
-        margin-bottom: 8px;
-        letter-spacing: 2px;
-      }
-
-      .field-input {
-        width: 100%;
-        padding: 12px 14px;
-        font-size: 14px;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(220, 160, 30, 0.2);
-        border-radius: 2px;
-        color: var(--text);
-        font-family: inherit;
-        outline: none;
-        transition: border-color 0.2s, box-shadow 0.2s;
-      }
-
-      .field-input:focus {
-        border-color: var(--gold);
-        box-shadow: 0 0 0 3px rgba(220, 160, 30, 0.15);
-      }
-
-      .field-input::placeholder {
-        color: rgba(168, 148, 98, 0.5);
-      }
-
-      .btn-login {
-        width: 100%;
-        margin-top: 12px;
-        padding: 13px;
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 8px;
-        color: #1a0d00;
-        background: linear-gradient(180deg, #ffd88c 0%, #dca01e 50%, #a87000 100%);
-        border: 1px solid #dca01e;
-        border-radius: 2px;
-        cursor: pointer;
-        font-family: inherit;
-        transition: transform 0.1s, box-shadow 0.2s;
-        box-shadow: 0 2px 12px rgba(220, 160, 30, 0.25);
-      }
-
-      .btn-login:hover:not(:disabled) {
-        box-shadow: 0 4px 20px rgba(220, 160, 30, 0.4);
-      }
-
-      .btn-login:active:not(:disabled) {
-        transform: translateY(1px);
-      }
-
-      .btn-login:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-
-      .message {
-        margin-top: 16px;
-        padding: 10px;
-        font-size: 12px;
-        border-radius: 2px;
-        display: none;
-      }
-
-      .message.show { display: block; }
-      .message.error { background: rgba(255, 110, 90, 0.1); color: var(--danger); border: 1px solid rgba(255, 110, 90, 0.3); }
-      .message.loading { background: rgba(220, 160, 30, 0.08); color: var(--gold-light); border: 1px solid rgba(220, 160, 30, 0.2); }
-
-      .footer {
-        margin-top: 28px;
-        font-size: 11px;
-        color: var(--text-dim);
-        letter-spacing: 2px;
-        opacity: 0.7;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="login-wrap">
-      <div class="brand">
-        <div class="brand-title">诸神黄昏</div>
-        <div class="brand-divider"></div>
-        <div class="brand-sub">设 备 管 理 系 统</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">账 号 登 录</div>
-
-        <form id="loginForm" onsubmit="handleLogin(event)">
-          <div class="field">
-            <label class="field-label">用户名</label>
-            <input type="text" class="field-input" id="username" name="username" placeholder="请输入用户名" autofocus />
-          </div>
-
-          <div class="field">
-            <label class="field-label">密码</label>
-            <input type="password" class="field-input" id="password" name="password" placeholder="请输入密码" />
-          </div>
-
-          <button type="submit" class="btn-login" id="btnLogin">登 录</button>
-
-          <div class="message" id="msg">登录中...</div>
-        </form>
-      </div>
-
-      <div class="footer">© 诸神黄昏 · 设备管理系统</div>
-    </div>
-
-    <script>
-      // ⚙️ 如果你把页面放到和 API 不同的域名，请改成 API 域名，例如：
-      // const API_BASE = "https://1jiangjun.com";
-      const API_BASE = "";
-
-      function apiCall(path, body) {
-        return fetch(API_BASE + path, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        }).then(function (r) { return r.json(); });
-      }
-
-      function showMsg(text, type) {
-        var el = document.getElementById("msg");
-        el.className = "message show " + (type || "");
-        el.textContent = text;
-        if (type !== "loading") {
-          setTimeout(function () { el.className = "message"; }, 3500);
-        }
-      }
-
-      function handleLogin(event) {
-        event.preventDefault();
-        var username = document.getElementById("username").value.trim();
-        var password = document.getElementById("password").value.trim();
-        var btn = document.getElementById("btnLogin");
-
-        if (!username || !password) {
-          showMsg("请输入用户名和密码", "error");
-          return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = "登 录 中...";
-        showMsg("正在验证身份...", "loading");
-
-        apiCall("/api/EaodLogin.php", {
-          action: "pre_login",
-          usrname: username,
-          password: password
-        }).then(function (result) {
-          if (result && result.Success) {
-            var u = result.Success;
-            localStorage.setItem("ACCESS-TOKEN", u.token || "");
-            localStorage.setItem("CURRENT-USRNAME", u.usrname || username);
-            localStorage.setItem("CURRENT-EMAIL", u.email || "");
-            localStorage.setItem("CURRENT-AUTHORTY", u.authorty || "");
-            localStorage.setItem("CURRENT-USERID", u.userid || "");
-            showMsg("登录成功，正在跳转...", "loading");
-            setTimeout(function () {
-              window.location.href = "./devices.html";
-            }, 400);
-          } else if (result && result.error) {
-            showMsg(String(result.error), "error");
-            btn.disabled = false;
-            btn.textContent = "登 录";
-          } else if (result && result.step === "2fa") {
-            showMsg("该账号需要二次验证", "error");
-            btn.disabled = false;
-            btn.textContent = "登 录";
-          } else {
-            showMsg("登录失败，请重试", "error");
-            btn.disabled = false;
-            btn.textContent = "登 录";
-          }
-        }).catch(function (err) {
-          showMsg("网络错误：" + (err.message || err), "error");
-          btn.disabled = false;
-          btn.textContent = "登 录";
-        });
-      }
-    </script>
-  </body>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
 </html>
