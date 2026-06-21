@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PriceHunter · 电商价格自动化采集与对比</title>
+<style>
+  :root { --c-bg:#0f172a; --c-soft:#1e293b; --c-line:#334155; --c-text:#e2e8f0;
+          --c-muted:#94a3b8; --c-accent:#38bdf8; --c-jd:#E1251B; --c-taobao:#FF6600;
+          --c-pdd:#C81623; --c-ok:#22c55e; --c-warn:#f59e0b; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+         background: linear-gradient(180deg,#0f172a 0%,#1e293b 100%); color: var(--c-text); min-height:100vh; }
+  .container { max-width:1200px; margin:0 auto; padding:28px 20px; }
+  header { text-align:center; margin-bottom:28px; }
+  header h1 { font-size:28px; margin:8px 0; letter-spacing:1px; }
+  header p { color: var(--c-muted); margin:4px 0; }
+  .card { background: var(--c-soft); border:1px solid var(--c-line);
+          border-radius:14px; padding:22px; margin-bottom:22px;
+          box-shadow: 0 4px 20px rgba(0,0,0,.25); }
+  .card h2 { margin:0 0 14px 0; font-size:18px; color:var(--c-accent); }
+  .search { display:flex; gap:10px; flex-wrap:wrap; }
+  .search input[type=text] { flex:1; min-width:220px; padding:12px 14px;
+           border-radius:10px; border:1px solid var(--c-line); background:#0b1220;
+           color:var(--c-text); font-size:15px; outline:none; }
+  .search input[type=text]:focus { border-color:var(--c-accent); }
+  .search select { padding:12px; border-radius:10px; border:1px solid var(--c-line);
+           background:#0b1220; color:var(--c-text); font-size:14px; }
+  .btn { padding:12px 22px; border-radius:10px; background:var(--c-accent); color:#00131f;
+         border:none; font-weight:600; cursor:pointer; font-size:15px; }
+  .btn:disabled { background:#475569; color:#94a3b8; cursor:not-allowed; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .chip { padding:6px 12px; border-radius:999px; background:#334155; color:#e2e8f0;
+          cursor:pointer; font-size:13px; border:1px solid #475569; }
+  .chip:hover { background:var(--c-accent); color:#00131f; border-color:var(--c-accent); }
+
+  table { width:100%; border-collapse: collapse; font-size:14px; }
+  th, td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--c-line); }
+  th { color: var(--c-muted); font-weight:500; font-size:13px; }
+  tr:hover td { background: rgba(56,189,248,.06); }
+  .plat { display:inline-block; padding:2px 8px; border-radius:6px; color:#fff; font-size:12px; font-weight:600; }
+  .plat.jd { background:var(--c-jd); } .plat.taobao { background:var(--c-taobao); }
+  .plat.pdd { background:var(--c-pdd); }
+  .price { font-weight:700; color:#fde047; }
+  .label { display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+           background:#334155; color:#f1f5f9; }
+  .label.rec { background:#22c55e; color:#052e16; }
+  .label.low { background:#f59e0b; color:#3b2600; }
+  .label.hot { background:#ef4444; color:#3f0000; }
+  .charts { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 820px) { .charts { grid-template-columns: 1fr; } }
+  .chart-box { background:#0b1220; border-radius:10px; padding:10px; text-align:center; }
+  .chart-box img { max-width:100%; height:auto; border-radius:8px; }
+  .summary-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+  .summary-item { background:#0b1220; border:1px solid var(--c-line); border-radius:10px; padding:14px; }
+  .summary-item h3 { margin:0 0 8px; color:var(--c-accent); font-size:16px; }
+  .summary-item dl { margin:0; display:grid; grid-template-columns: auto 1fr; gap:6px 12px; font-size:13px; }
+  .summary-item dt { color:var(--c-muted); } .summary-item dd { margin:0; }
+  a.link { color: var(--c-accent); text-decoration:none; font-size:13px; }
+  a.link:hover { text-decoration: underline; }
+  .loader { display:inline-block; width:16px; height:16px; border:2px solid #00131f;
+            border-top-color: transparent; border-radius:50%; animation: spin .8s linear infinite; vertical-align:middle; margin-right:8px;}
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .title-text { color: var(--c-text); }
+  .score { color:#34d399; font-weight:600; }
+  details > summary { cursor:pointer; color:var(--c-muted); padding:6px 0; }
+  pre.code { background:#0b1220; padding:12px; border-radius:10px; font-size:12px;
+             overflow:auto; max-height:300px; border:1px solid var(--c-line); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🛒 PriceHunter · 电商价格自动化采集与对比</h1>
+    <p>京东 / 淘宝 / 拼多多 · 批量抓取 · 清洗去重 · 横向对比 · 价格趋势 · 性价比推荐</p>
+  </header>
+
+  <div class="card">
+    <h2>🔎 搜索采集</h2>
+    <form class="search" id="searchForm" onsubmit="return runSearch(event)">
+      <input type="text" id="keyword" placeholder="输入商品关键词，如: iPhone 15 Pro、无线耳机"
+             value="{{ demo_keyword }}" required>
+      <select id="maxItems">
+        <option value="8">每个平台 8 条</option>
+        <option value="10" selected>每个平台 10 条</option>
+        <option value="15">每个平台 15 条</option>
+      </select>
+      <select id="platforms">
+        <option value="jd,taobao,pdd" selected>京东 + 淘宝 + 拼多多</option>
+        <option value="jd">仅京东</option>
+        <option value="taobao">仅淘宝</option>
+        <option value="pdd">仅拼多多</option>
+      </select>
+      <button class="btn" type="submit" id="runBtn">🚀 运行脚本</button>
+    </form>
+    <div class="chips" id="suggestChips">
+      {% for s in suggested %}
+      <span class="chip" onclick="quickFill('{{ s }}')">{{ s }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="liveResult"></div>
+
+  <!-- 初始示例数据 -->
+  <div class="card" id="demoCard">
+    <h2>📦 初始化示例：关键词「{{ demo_keyword }}」</h2>
+    <p style="color:var(--c-muted); font-size:14px; margin-top:0;">
+      采集时间：{{ demo.scraped_at }} · 共 {{ demo.count }} 条商品（已清洗去重）
+    </p>
+
+    <div class="summary-grid">
+      {% for plat, info in demo.summary.items() %}
+      <div class="summary-item">
+        <h3>{{ plat.upper() }} 平台统计</h3>
+        <dl>
+          <dt>商品数</dt><dd>{{ info.count }}</dd>
+          <dt>最低价</dt><dd class="price">¥{{ '%.2f'|format(info.min_price) }}</dd>
+          <dt>均价</dt><dd>¥{{ '%.2f'|format(info.avg_price) }}</dd>
+          <dt>最高价</dt><dd>¥{{ '%.2f'|format(info.max_price) }}</dd>
+          <dt>平均销量</dt><dd>{{ info.avg_sales }}</dd>
+          <dt>平均评分</dt><dd>{{ info.avg_rating }}</dd>
+        </dl>
+        <div style="margin-top:8px; font-size:12px; color:var(--c-muted);">最低: <a class="link" href="{{ info.cheapest_url }}" target="_blank" rel="noopener">{{ info.cheapest_title[:20] }}...</a></div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="charts" style="margin-top:18px;">
+      <div class="chart-box">
+        <img src="data:image/png;base64,{{ demo.bar_b64 }}" alt="bar chart">
+      </div>
+      <div class="chart-box">
+        <img src="data:image/png;base64,{{ demo.trend_b64 }}" alt="trend chart">
+      </div>
+    </div>
+
+    <h2 style="margin-top:24px;">📊 商品列表（按价格升序 · 含推荐标注）</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>#</th><th>平台</th><th>商品</th><th>店铺</th><th>价格</th><th>销量</th><th>评分</th><th>性价比</th><th>标注</th><th>链接</th></tr>
+        </thead>
+        <tbody>
+          {% for p in demo.products %}
+          <tr>
+            <td>{{ p.price_rank }}</td>
+            <td><span class="plat {{ p.platform }}">{{ p.platform.upper() }}</span></td>
+            <td class="title-text">{{ p.title }}</td>
+            <td>{{ p.store_name }}</td>
+            <td class="price">¥{{ '%.2f'|format(p.price) }}</td>
+            <td>{{ p.sales }}</td>
+            <td>{{ p.store_rating }}</td>
+            <td class="score">{{ '%.2f'|format(p.score) }}</td>
+            <td>{% if p.label %}<span class="label {% if '性价比' in p.label %}rec{% elif '最低价' in p.label %}low{% elif '销量' in p.label %}hot{% endif %}">{{ p.label }}</span>{% endif %}</td>
+            <td><a class="link" href="{{ p.url }}" target="_blank" rel="noopener">查看</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <details style="margin-top:14px;">
+      <summary>查看原始 JSON 输出示例</summary>
+      <pre class="code">{{ demo.raw_json | replace('<','&lt;') | replace('>','&gt;') }}</pre>
+    </details>
+  </div>
+
+  <footer style="text-align:center; color:var(--c-muted); padding:24px 0; font-size:12px;">
+    PriceHunter · 演示脚本 · 生产环境需配置登录 Cookie 或浏览器渲染
+  </footer>
+</div>
+
+<script>
+function quickFill(q) { document.getElementById('keyword').value = q; }
+
+function runSearch(e) {
+  e.preventDefault();
+  const kw = document.getElementById('keyword').value.trim();
+  if (!kw) return false;
+  const maxItems = document.getElementById('maxItems').value;
+  const platforms = document.getElementById('platforms').value;
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="loader"></span>运行中...';
+  const live = document.getElementById('liveResult');
+  live.innerHTML = '<div class="card"><h2>⏳ 正在从各平台采集并清洗数据...</h2><p style="color:var(--c-muted);">脚本通常需要 2-5 秒，请勿关闭页面。</p></div>';
+  document.getElementById('demoCard').style.display = 'none';
+
+  const url = '/api/search?q=' + encodeURIComponent(kw) + '&max_items=' + maxItems + '&platforms=' + encodeURIComponent(platforms);
+  fetch(url).then(r => r.json()).then(data => {
+    btn.disabled = false; btn.textContent = '🚀 运行脚本';
+    if (!data.ok) { live.innerHTML = '<div class="card"><h2>⚠️ 出错</h2><p>' + data.error + '</p></div>'; return; }
+    renderResult(data.keyword, data.data);
+  }).catch(err => {
+    btn.disabled = false; btn.textContent = '🚀 运行脚本';
+    live.innerHTML = '<div class="card"><h2>❌ 请求失败</h2><pre>' + err + '</pre></div>';
+  });
+  return false;
+}
+
+function renderResult(kw, r) {
+  const live = document.getElementById('liveResult');
+  let html = '<div class="card"><h2>🔎 现场运行结果：「' + kw + '」</h2>' +
+    '<p style="color:var(--c-muted); font-size:14px;">采集时间：' + r.scraped_at + ' · 共 ' + r.count + ' 条商品（已清洗去重）</p>';
+
+  html += '<div class="summary-grid">';
+  for (const plat in r.summary) {
+    const info = r.summary[plat];
+    html += '<div class="summary-item"><h3>' + plat.toUpperCase() + ' 平台统计</h3><dl>' +
+      '<dt>商品数</dt><dd>' + info.count + '</dd>' +
+      '<dt>最低价</dt><dd class="price">¥' + info.min_price.toFixed(2) + '</dd>' +
+      '<dt>均价</dt><dd>¥' + info.avg_price.toFixed(2) + '</dd>' +
+      '<dt>最高价</dt><dd>¥' + info.max_price.toFixed(2) + '</dd>' +
+      '<dt>平均销量</dt><dd>' + info.avg_sales + '</dd>' +
+      '<dt>平均评分</dt><dd>' + info.avg_rating + '</dd></dl>' +
+      '<div style="margin-top:8px; font-size:12px; color:var(--c-muted);">最低: <a class="link" target="_blank" href="' + info.cheapest_url + '">' + info.cheapest_title.slice(0, 24) + '...</a></div>' +
+      '</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="charts" style="margin-top:18px;">' +
+    '<div class="chart-box"><img src="data:image/png;base64,' + r.bar_b64 + '" alt="bar"></div>' +
+    '<div class="chart-box"><img src="data:image/png;base64,' + r.trend_b64 + '" alt="trend"></div>' +
+    '</div>';
+
+  html += '<h2 style="margin-top:24px;">📊 商品列表</h2><div style="overflow-x:auto;"><table><thead>' +
+    '<tr><th>#</th><th>平台</th><th>商品</th><th>店铺</th><th>价格</th><th>销量</th><th>评分</th><th>性价比</th><th>标注</th><th>链接</th></tr>' +
+    '</thead><tbody>';
+  r.products.forEach(p => {
+    const labelCls = (p.label || '').includes('性价比') ? 'rec' :
+                     (p.label || '').includes('最低价') ? 'low' :
+                     (p.label || '').includes('销量') ? 'hot' : '';
+    html += '<tr>' +
+      '<td>' + p.price_rank + '</td>' +
+      '<td><span class="plat ' + p.platform + '">' + p.platform.toUpperCase() + '</span></td>' +
+      '<td class="title-text">' + escape_html(p.title) + '</td>' +
+      '<td>' + escape_html(p.store_name) + '</td>' +
+      '<td class="price">¥' + p.price.toFixed(2) + '</td>' +
+      '<td>' + p.sales + '</td>' +
+      '<td>' + p.store_rating + '</td>' +
+      '<td class="score">' + p.score.toFixed(2) + '</td>' +
+      '<td>' + (p.label ? ('<span class="label ' + labelCls + '">' + p.label + '</span>') : '') + '</td>' +
+      '<td><a class="link" target="_blank" rel="noopener" href="' + p.url + '">查看</a></td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div>';
+
+  html += '<div style="margin-top:16px;"><a class="btn" href="/api/raw/' + encodeURIComponent(kw) + '" style="text-decoration:none;">⬇️ 下载 JSON 原始结果</a></div>';
+
+  html += '</div>';
+  live.innerHTML = html;
+}
+
+function escape_html(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>

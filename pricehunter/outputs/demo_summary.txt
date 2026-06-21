@@ -1,0 +1,25 @@
+关键词: iPhone 15 Pro
+采集时间: 2026-06-21 21:42:01
+商品总数: 30
+
+=== 输入示例 (input) ===
+关键词 = "iPhone 15 Pro"
+平台 = jd, taobao, pdd
+max_items = 10
+
+=== 输出示例 (output - top5) ===
+#1 [PDD] ¥3059.82 销量2666 评分4.21 | 💰 最低价
+    标题: iPhone 15 Pro 旗舰店直发 全国包邮 次日达 【百亿补贴】
+    链接: https://mobile.yangkeduo.com/goods.html?goods_id=PD931425270134
+#2 [PDD] ¥3062.04 销量54871 评分4.72 | ✅ 性价比推荐
+    标题: iPhone 15 Pro 旗舰店直发 全国包邮 次日达 【百亿补贴】
+    链接: https://mobile.yangkeduo.com/goods.html?goods_id=PD749686636481
+#3 [PDD] ¥3376.10 销量50 评分4.89 | 
+    标题: iPhone 15 Pro 新款升级 高性价比 品质优选 【百亿补贴】
+    链接: https://mobile.yangkeduo.com/goods.html?goods_id=PD17481415468
+#4 [PDD] ¥3448.31 销量29847 评分4.54 | 
+    标题: iPhone 15 Pro 新款升级 高性价比 品质优选 【百亿补贴】
+    链接: https://mobile.yangkeduo.com/goods.html?goods_id=PD626450164843
+#5 [PDD] ¥3547.45 销量21739 评分4.79 | 
+    标题: iPhone 15 Pro 正品保障 官方授权 限时特惠 【百亿补贴】
+    链接: https://mobile.yangkeduo.com/goods.html?goods_id=PD132063369069
