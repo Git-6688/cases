@@ -26,7 +26,14 @@
       }
       * { box-sizing: border-box; margin: 0; padding: 0; }
       html, body { width: 100%; min-height: 100vh; }
-      body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", monospace; background: linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 100%); color: var(--text); font-size: 14px; line-height: 1.6; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", monospace; 
+        background: 
+          linear-gradient(180deg, rgba(10, 6, 4, 0.85) 0%, rgba(26, 13, 0, 0.90) 100%),
+          url('https://images.alfredcool.com/image/naruto/brother.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: var(--text); font-size: 14px; line-height: 1.6; }
       .layout { min-height: 100vh; display: flex; }
 
       .sidebar { width: 220px; background: rgba(8,5,2,0.8); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
