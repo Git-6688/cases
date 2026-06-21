@@ -3,7 +3,10 @@
    装饰：鼬 / 佐助 写轮眼 · 猩红火焰
    ========================================================= */
 .login-page {
-    background: #0a0a0a;
+    background: url('https://neeko-copilot.bytedance.net/api/text_to_image?prompt=Uchiha%20Sasuke%20and%20Itachi%20battle%20scene%20in%20rain%20Naruto%20anime%20style%20dramatic%20lighting&image_size=landscape_16_9');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     min-height: 100vh;
     position: relative;
     overflow: hidden;
@@ -17,24 +20,8 @@
     content: "";
     position: absolute;
     inset: 0;
-    background:
-        radial-gradient(ellipse at 20% 30%, rgba(220, 38, 38, 0.18) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 70%, rgba(230, 175, 55, 0.12) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(127, 29, 29, 0.15) 0%, transparent 60%);
+    background: rgba(0, 0, 0, 0.3);
     z-index: 0;
-}
-
-/* 网格图案 */
-.login-page::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(220, 38, 38, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(220, 38, 38, 0.04) 1px, transparent 1px);
-    background-size: 50px 50px;
-    z-index: 0;
-    pointer-events: none;
 }
 
 .login-bg {

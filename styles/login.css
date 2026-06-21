@@ -8,14 +8,6 @@
     overflow: hidden;
 }
 
-.login-page::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: #0000006b;
-    z-index: 0;
-}
-
 .login-bg {
     position: absolute;
     inset: 0;
@@ -25,42 +17,16 @@
 .login-bg-image {
     position: absolute;
     inset: 0;
-    background-image:
-        url("../images/bg.jpg"),
-        url("../images/bg.png"),
-        url("../images/bg.jpeg"),
-        linear-gradient(135deg, #1a0d00 0%, #2d1800 50%, #1a0d00 100%);
+    background-image: url('https://neeko-copilot.bytedance.net/api/text_to_image?prompt=Uchiha%20Sasuke%20and%20Itachi%20battle%20scene%20in%20rain%20Naruto%20anime%20style%20dramatic%20lighting&image_size=landscape_16_9');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    filter: saturate(0.85) contrast(1.08);
-}
-
-.login-bg-image::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(180deg, rgba(20, 10, 0, 0.35) 0%, transparent 30%, rgba(10, 5, 0, 0.55) 100%),
-        radial-gradient(ellipse at 30% 40%, rgba(180, 110, 10, 0.22) 0%, transparent 55%),
-        radial-gradient(ellipse at 70% 65%, rgba(100, 50, 0, 0.25) 0%, transparent 60%);
-    pointer-events: none;
-}
-
-.login-bg-image::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(90, 50, 10, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(90, 50, 10, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
 }
 
 .login-bg-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.6) 100%);
+    background: rgba(0, 0, 0, 0.3);
 }
 
 .skip-btn {

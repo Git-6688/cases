@@ -1,19 +1,14 @@
 .login-page {
-    background: #f0f7ff;
+    background: url('https://neeko-copilot.bytedance.net/api/text_to_image?prompt=Uchiha%20Sasuke%20and%20Itachi%20battle%20scene%20in%20rain%20Naruto%20anime%20style%20dramatic%20lighting&image_size=landscape_16_9');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     position: relative;
     overflow: hidden;
-}
-
-.login-page::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(240, 247, 255, 0.88);
-    z-index: 0;
 }
 
 .login-bg {
@@ -25,35 +20,16 @@
 .login-bg-image {
     position: absolute;
     inset: 0;
-    background-image:
-        url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=1920&h=1080&fit=crop');
+    background-image: url('https://neeko-copilot.bytedance.net/api/text_to_image?prompt=Uchiha%20Sasuke%20and%20Itachi%20battle%20scene%20in%20rain%20Naruto%20anime%20style%20dramatic%20lighting&image_size=landscape_16_9');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }
 
-.login-bg-image::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 247, 255, 0.88) 100%);
-    pointer-events: none;
-}
-
-.login-bg-image::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-}
-
 .login-bg-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at center, transparent 0%, rgba(255, 255, 255, 0.6) 100%);
+    background: rgba(0, 0, 0, 0.3);
 }
 
 .skip-btn {
